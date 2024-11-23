@@ -39,41 +39,75 @@ const slideData = [
 type SlideProps = {
     mainHeader:string;
     info:string;
+    windowWidth:number;
 }
 
-function Slide({mainHeader,info}:SlideProps){
-    return <View style={slideStyles.container}>
-        <Text style={slideStyles.mainHeader}>{mainHeader}</Text>
-        <Text style={slideStyles.info} android_hyphenationFrequency="full">
-            {info}
-        </Text>
-    </View>
+function Slide({mainHeader,info,windowWidth}:SlideProps){
+    return (
+      <View style={{width:windowWidth,...slideStyles.slideContainer}}>
+          <Text style={slideStyles.mainHeader}>{mainHeader}</Text>
+          <Text style={slideStyles.info} android_hyphenationFrequency="full">
+              {info}
+          </Text>
+      </View>
+    )
 }
 
 
 export default function Carousel(){
+    const scrollX = useAnimatedValue(0);
+    const {width: windowWidth} = useWindowDimensions();
     return (
-        <Slide mainHeader={slideData[0].mainHeader} info={slideData[0].info}/>
+      <View style={slideStyles.scrollContainer}>
+        <ScrollView
+            horizontal={true}
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={(event: NativeSyntheticEvent<NativeScrollEvent>) =>{
+              
+              const dist =  event.nativeEvent.contentOffset.x * 0.9;
+              [{nativeEvent: {
+                contentOffset: {
+                  x: scrollX
+                }
+              }
+            }]
+            }}
+            scrollEventThrottle={1}>
+            {slideData.map((slide, slideIndex) => {
+              return (
+                <Slide mainHeader={slide.mainHeader} info={slide.info} windowWidth={windowWidth} key={slideIndex}/>
+              );
+            })}
+          </ScrollView>
+      </View>
     )
 }
 
 
 const slideStyles = StyleSheet.create({
-    container:{
-        marginLeft:16,
-        marginRight:16,
-        backgroundColor:'#c9ccf0',
+    slideContainer:{
+        paddingLeft:16,
+        paddingRight:16,
         gap:16,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    scrollContainer: {
+      flex:0.8,
+      alignItems: 'center',
+      justifyContent: 'center',   
+      backgroundColor:'#c9ccf0',   
     },
     mainHeader:{
         textAlign:"center",
         paddingTop:8,
-        fontFamily:'Nunito-Regular'
+        fontFamily:'Nunito-Bold'
     },
     info:{
         marginLeft:8,
         marginRight:8,
         textAlign:'justify',
-        fontFamily:'Nunito-Bold'
+        fontFamily:'Nunito-Regular'
     }
 });

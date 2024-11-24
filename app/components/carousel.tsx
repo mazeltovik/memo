@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {  ScrollView,
   Text,
   StyleSheet,
@@ -6,6 +7,8 @@ import {  ScrollView,
   NativeSyntheticEvent,
   NativeScrollEvent, } from "react-native";
 import LottieView from 'lottie-react-native';
+import MainModal from './modal';
+import InstructionModal from './modals/instructionModal';
 import slidesData from "@/static/slidesData";
 
 type SlideProps = {
@@ -39,6 +42,7 @@ function Slide({mainHeader,info,windowWidth,slideIndex,maxSlides}:SlideProps){
 
 export default function Carousel(){
     const {width: windowWidth} = useWindowDimensions();
+    const [modalVisible, setModalVisible] = useState(false);
     return (
       <View style={carouselStyles.scrollContainer}>
         <ScrollView
@@ -50,7 +54,7 @@ export default function Carousel(){
               const scrollX = Math.floor(event.nativeEvent.contentOffset.x);
               const totalWidth = Math.floor(windowWidth * (slidesData.length-1));
               if(scrollX == totalWidth){
-                console.log('yes');
+                setModalVisible(true);
               }
             })}
             >
@@ -67,6 +71,10 @@ export default function Carousel(){
               );
             })}
           </ScrollView>
+          {modalVisible && (
+            <MainModal>
+              <InstructionModal modalVisible={modalVisible} setModalVisible={setModalVisible}/>
+            </MainModal>)}
       </View>
     )
 }
@@ -112,7 +120,8 @@ const carouselStyles = StyleSheet.create({
     flex:1,
     // alignItems: 'center',
     // justifyContent: 'center',   
-    backgroundColor:'#c9ccf0',   
+    backgroundColor:'#c9ccf0',
+    position:'relative'   
   },
 });
 

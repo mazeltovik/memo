@@ -1,82 +1,69 @@
-import {   ScrollView,
-    Text,
-    StyleSheet,
-    View,
-    Button,
-    ImageBackground,
-    Animated,
-    useWindowDimensions,
-    useAnimatedValue, } from "react-native";
-    import { useRef, useEffect } from 'react';
-
-type SlideData = {
-    mainHeader:string;
-    info:string;
-}
-
-const slideData = [
-    {
-        mainHeader:'Приветствую!',
-        info:`Данное приложение разрабатывалось, для поддержки вашего мозга в тонусе.`
-    },
-    {
-        mainHeader:'Предварительная оценка.',
-        info:`Проведите предварительную оценку работы префронтальной коры вашего головного мозга.        
-        `
-    },
-    {
-        mainHeader:'Упражнения.',
-        info:`Решайте по одному блоку упражнений в день. Задачи на сложение, умножение, деление расположены в случайном порядке.Как только время потраченное вами на вычесления, начнет уменьшаться, Вы заметите, как начнут улучшаться ваши способности к решению арифметических задач.
-        `
-    },
-    {
-        mainHeader:'Оценка.',
-        info:`Через пять дней проведите оценку работы префронтальной коры.
-        `
-    }
-]
+import {  ScrollView,
+  Text,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+  NativeSyntheticEvent,
+  NativeScrollEvent, } from "react-native";
+import LottieView from 'lottie-react-native';
+import slidesData from "@/static/slidesData";
 
 type SlideProps = {
     mainHeader:string;
     info:string;
+    slideIndex:number;
+    maxSlides:number;
     windowWidth:number;
 }
 
-function Slide({mainHeader,info,windowWidth}:SlideProps){
+function Slide({mainHeader,info,windowWidth,slideIndex,maxSlides}:SlideProps){
     return (
-      <View style={{width:windowWidth,...slideStyles.slideContainer}}>
-          <Text style={slideStyles.mainHeader}>{mainHeader}</Text>
-          <Text style={slideStyles.info} android_hyphenationFrequency="full">
-              {info}
-          </Text>
+      <View style={[slideStyles.slideContainer,{width:windowWidth}]}>
+          <View style={slideStyles.slideHeader}>
+            <Text style={slideStyles.mainHeader}>{mainHeader}</Text>
+            <Text style={slideStyles.info} android_hyphenationFrequency="full">
+                {info}
+            </Text>
+          </View>
+          <View style={slideStyles.animationContainer}>
+            <LottieView
+                autoPlay
+                style={[slideStyles.lottieContainer,{transform: slideIndex == maxSlides? [{scaleX: -1},{scaleY:1}]:''}]}
+                source={require('../../assets/animations/swipeHand.json')}
+              />
+          </View>
       </View>
     )
 }
 
 
 export default function Carousel(){
-    const scrollX = useAnimatedValue(0);
     const {width: windowWidth} = useWindowDimensions();
     return (
-      <View style={slideStyles.scrollContainer}>
+      <View style={carouselStyles.scrollContainer}>
         <ScrollView
             horizontal={true}
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            onScroll={(event: NativeSyntheticEvent<NativeScrollEvent>) =>{
-              
-              const dist =  event.nativeEvent.contentOffset.x * 0.9;
-              [{nativeEvent: {
-                contentOffset: {
-                  x: scrollX
-                }
+            scrollEventThrottle={1}
+            onScroll={((event: NativeSyntheticEvent<NativeScrollEvent>) =>{
+              const scrollX = Math.floor(event.nativeEvent.contentOffset.x);
+              const totalWidth = Math.floor(windowWidth * (slidesData.length-1));
+              if(scrollX == totalWidth){
+                console.log('yes');
               }
-            }]
-            }}
-            scrollEventThrottle={1}>
-            {slideData.map((slide, slideIndex) => {
+            })}
+            >
+            {slidesData.map((slide, slideIndex, slides) => {
               return (
-                <Slide mainHeader={slide.mainHeader} info={slide.info} windowWidth={windowWidth} key={slideIndex}/>
+                <Slide 
+                  mainHeader={slide.mainHeader}
+                  info={slide.info}
+                  windowWidth={windowWidth}
+                  key={slideIndex}
+                  slideIndex={slideIndex} 
+                  maxSlides={slides.length-1}/>
+                
               );
             })}
           </ScrollView>
@@ -87,17 +74,25 @@ export default function Carousel(){
 
 const slideStyles = StyleSheet.create({
     slideContainer:{
-        paddingLeft:16,
-        paddingRight:16,
-        gap:16,
-        alignItems: 'center',
-        justifyContent: 'center',
+      paddingLeft:16,
+      paddingRight:16,
+      justifyContent: 'space-between',
+        
     },
-    scrollContainer: {
-      flex:0.8,
-      alignItems: 'center',
-      justifyContent: 'center',   
-      backgroundColor:'#c9ccf0',   
+    slideHeader:{
+      // backgroundColor:'#fcba03',
+      gap:16,
+      flexGrow:0.5,
+      justifyContent:'flex-end',
+    },
+    animationContainer:{
+      alignItems:'flex-end',
+      // backgroundColor: '#fcba03'
+    },
+    lottieContainer:{
+      width:80,
+      height: 80,
+      backgroundColor: '#c9ccf0',
     },
     mainHeader:{
         textAlign:"center",
@@ -105,9 +100,19 @@ const slideStyles = StyleSheet.create({
         fontFamily:'Nunito-Bold'
     },
     info:{
-        marginLeft:8,
-        marginRight:8,
+        // marginLeft:8,
+        // marginRight:8,
         textAlign:'justify',
         fontFamily:'Nunito-Regular'
     }
 });
+
+const carouselStyles = StyleSheet.create({
+  scrollContainer: {
+    flex:1,
+    // alignItems: 'center',
+    // justifyContent: 'center',   
+    backgroundColor:'#c9ccf0',   
+  },
+});
+

@@ -1,15 +1,14 @@
-import { Stack } from "expo-router";
+import { Stack } from 'expo-router';
 import { getLoadedFonts, useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import {useEffect} from 'react';
-
+import { useEffect } from 'react';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    'Nunito-Bold': require("../assets/fonts/Nunito-Bold.ttf"),
-    'Nunito-Regular': require("../assets/fonts/Nunito-Regular.ttf")
+    'Nunito-Bold': require('../assets/fonts/Nunito-Bold.ttf'),
+    'Nunito-Regular': require('../assets/fonts/Nunito-Regular.ttf'),
   });
 
   useEffect(() => {
@@ -21,5 +20,5 @@ export default function RootLayout() {
   if (!loaded && !error) {
     return null;
   }
-  return <Stack/>
+  return <Stack />;
 }

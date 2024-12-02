@@ -1,14 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import {   ScrollView,
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  ScrollView,
   Text,
   StyleSheet,
   View,
   ImageBackground,
   Animated,
   useWindowDimensions,
-  useAnimatedValue, } from "react-native";
-import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
-import Carousel from "./components/carousel";
+  useAnimatedValue,
+} from 'react-native';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import Carousel from './components/carousel';
+import PreliminaryAssessment from './components/assessment';
 
 const DATA = [
   {
@@ -29,8 +32,8 @@ const DATA = [
   },
 ];
 
-export default function App(){
-  return <Carousel/>
+export default function App() {
+  return <PreliminaryAssessment />;
 }
 
 // type FadeInViewProps = PropsWithChildren<{style: ViewStyle}>;
@@ -39,7 +42,6 @@ export default function App(){
 //    // Initial value for opacity: 0
 //   const start = useAnimatedValue(100);
 //   const finish = useAnimatedValue(300);
-  
 
 //   useEffect(() => {
 //     Animated.loop(
@@ -121,7 +123,6 @@ export default function App(){
 // //     </Animated.View>
 // //   );
 // // }
-
 
 // {/* <SafeAreaProvider>
 // <SafeAreaView style={styles.container}>

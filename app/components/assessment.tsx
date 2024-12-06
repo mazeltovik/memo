@@ -8,9 +8,13 @@ import {
   useWindowDimensions,
   useAnimatedValue,
   Animated,
+  TextInput,
+  Button,
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
+import useOnPressAnim from '../hooks/onPress';
+import isNum from '../scripts/isNumber';
 
 import LottieView from 'lottie-react-native';
 
@@ -53,39 +57,71 @@ function AssessmentDiscriptionSlide({ windowWidth }: SlideProps) {
 }
 
 function CountTest({ windowWidth }: SlideProps) {
+  const scalesAnim = useRef(new Animated.ValueXY({ x: 1, y: 1 })).current;
   return (
     <View
-      style={{
-        width: windowWidth,
-        paddingLeft: 16,
-        paddingRight: 16,
-        justifyContent: 'center',
-        gap: 16,
-      }}
+      style={[
+        assessmentStyles.countTestContainer,
+        {
+          width: windowWidth,
+        },
+      ]}
     >
-      <Text style={{ textAlign: 'center' }}>Тест на счет.</Text>
+      <Text style={assessmentStyles.assessmentDiscriptionHeader}>
+        Тест на счет.
+      </Text>
       <Text
-        style={{ textAlign: 'justify' }}
+        style={assessmentStyles.assessmentDiscriptionInfo}
         android_hyphenationFrequency="full"
       >
         Засеките время, которое вам потребуется на то, чтобы сосчитать от 1 до
         120 вслух как можно быстрее.
       </Text>
       <Pressable
-        style={{
-          marginTop: 32,
-          backgroundColor: '#F194FF',
-          borderRadius: 4,
-          padding: 8,
+        onPress={() => {
+          Animated.sequence([
+            Animated.timing(scalesAnim, {
+              toValue: { x: 0.9, y: 0.9 },
+              duration: 200,
+              useNativeDriver: true,
+            }),
+            Animated.timing(scalesAnim, {
+              toValue: { x: 1, y: 1 },
+              duration: 200,
+              useNativeDriver: true,
+            }),
+          ]).start();
         }}
+        style={[assessmentStyles.pressContainer]}
       >
-        <Text style={{ textAlign: 'center' }}>Вперед!</Text>
+        <Animated.Text
+          style={[
+            {
+              paddingTop: 8,
+              paddingBottom: 8,
+              borderRadius: 8,
+              color: 'white',
+              fontFamily: 'Nunito-Regular',
+              textAlign: 'center',
+              backgroundColor: '#252b43',
+            },
+            {
+              transform: [{ scaleX: scalesAnim.x }, { scaleY: scalesAnim.y }],
+            },
+          ]}
+        >
+          Вперед!
+        </Animated.Text>
       </Pressable>
     </View>
   );
 }
 
 function Clock() {
+  const { scales, onPress } = useOnPressAnim();
+  const [text, onChangeText] = useState('');
+  const [stop, setStop] = useState(false);
+  //
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const coords = useRef(new Animated.ValueXY()).current;
   const scalesAnim = useRef(new Animated.ValueXY()).current;
@@ -134,7 +170,7 @@ function Clock() {
   }, [scalesAnim, coords, hoursDegree, secondsDegree]);
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined = undefined;
-    if (finishedAnim) {
+    if (finishedAnim && !stop) {
       interval = setInterval(() => {
         setTime((time) => time + 1);
       }, 1000);
@@ -144,7 +180,7 @@ function Clock() {
         clearInterval(interval);
       }
     };
-  }, [time, finishedAnim]);
+  }, [time, finishedAnim, stop]);
   return (
     <View style={[assessmentStyles.clockContainer, { width: windowWidth }]}>
       <Animated.View
@@ -207,6 +243,54 @@ function Clock() {
           <Text style={assessmentStyles.clockCounter}>{time}</Text>
         )}
       </Animated.View>
+      <View
+        style={{
+          width: windowWidth,
+          paddingLeft: 16,
+          paddingRight: 16,
+          justifyContent: 'center',
+        }}
+      >
+        <TextInput
+          style={{
+            textAlign: 'center',
+            borderRadius: 8,
+            backgroundColor: '#252b43',
+            color: 'white',
+          }}
+          onChangeText={onChangeText}
+          value={text}
+          placeholder="Введите время"
+          placeholderTextColor={'white'}
+        />
+        <Pressable
+          onPress={() => {
+            onPress();
+            isNum(text);
+            setStop(!stop);
+          }}
+          style={[assessmentStyles.pressContainer]}
+        >
+          <Animated.Text
+            style={[
+              {
+                paddingTop: 8,
+                paddingBottom: 8,
+                borderRadius: 8,
+                color: 'white',
+                fontFamily: 'Nunito-Regular',
+                textAlign: 'center',
+                backgroundColor: '#252b43',
+              },
+              {
+                transform: [{ scaleX: scales.x }, { scaleY: scales.y }],
+              },
+            ]}
+          >
+            Стоп.
+          </Animated.Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -246,11 +330,26 @@ const assessmentStyles = StyleSheet.create({
   },
   assessmentDiscriptionHeader: {
     textAlign: 'center',
+    color: 'white',
     fontFamily: 'Nunito-Bold',
   },
   assessmentDiscriptionInfo: {
     textAlign: 'justify',
+    color: 'white',
     fontFamily: 'Nunito-Regular',
+  },
+  countTestContainer: {
+    paddingLeft: 16,
+    paddingRight: 16,
+    justifyContent: 'center',
+    gap: 16,
+  },
+  pressContainer: {
+    marginTop: 32,
+    borderRadius: '10%',
+    height: 80,
+    justifyContent: 'center',
+    backgroundColor: '#1d2029',
   },
   animationContainer: {
     alignItems: 'flex-end',
@@ -258,7 +357,7 @@ const assessmentStyles = StyleSheet.create({
   lottieContainer: {
     width: 80,
     height: 80,
-    backgroundColor: '#c9ccf0',
+    backgroundColor: '#1d2029',
   },
   clockContainer: {
     paddingLeft: 16,
@@ -268,6 +367,7 @@ const assessmentStyles = StyleSheet.create({
     backgroundColor: '#1d2029',
   },
   animatedContainer: {
+    position: 'absolute',
     width: 70,
     height: 70,
     borderRadius: 50,

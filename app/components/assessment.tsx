@@ -22,40 +22,6 @@ type SlideProps = {
   windowWidth: number;
 };
 
-function AssessmentDiscriptionSlide({ windowWidth }: SlideProps) {
-  return (
-    <View style={assessmentStyles.assessmentDiscriptionWrapper}>
-      <View
-        style={[
-          assessmentStyles.assessmentDiscriptionContainer,
-          { width: windowWidth },
-        ]}
-      >
-        <Text
-          style={assessmentStyles.assessmentDiscriptionHeader}
-          android_hyphenationFrequency="full"
-        >
-          Предварительная оценка работы префронтальной коры.
-        </Text>
-        <Text
-          style={assessmentStyles.assessmentDiscriptionInfo}
-          android_hyphenationFrequency="full"
-        >
-          Пожалуйста, оцените работу вашей префронтальной коры головного мозга
-          перед тем, как приступить к основным тренировкам.
-        </Text>
-      </View>
-      <View style={assessmentStyles.animationContainer}>
-        <LottieView
-          autoPlay
-          style={[assessmentStyles.lottieContainer]}
-          source={require('../../assets/animations/swipeHand.json')}
-        />
-      </View>
-    </View>
-  );
-}
-
 function CountTest({ windowWidth }: SlideProps) {
   const scalesAnim = useRef(new Animated.ValueXY({ x: 1, y: 1 })).current;
   return (

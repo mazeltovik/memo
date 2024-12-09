@@ -95,38 +95,46 @@ export default function Tutorial() {
               },
             ]}
           >
-            <Pressable onPress={onPress2} style={[styles.tileContainer]}>
-              <LinearGradient
-                colors={['#e893b9', '#ff968a', '#f5af58', '#b9d04c', '#12eb8c']}
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
-                style={styles.tileHeader}
-              />
-              <Animated.View
-                style={[
-                  styles.tileContent,
-                  {
-                    transform: [
-                      {
-                        rotateX: rotateTile2.interpolate({
-                          inputRange: [-90, 0],
-                          outputRange: ['-90deg', '-0deg'],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              >
-                <ImageBackground
-                  blurRadius={10}
-                  alt="tutorial_test_count"
-                  source={require('../assets/images/tutorial_test_count.jpg')}
-                  style={styles.imageContainer}
+            <Link href={'./training/countTest'} asChild>
+              <Pressable onPress={onPress2} style={[styles.tileContainer]}>
+                <LinearGradient
+                  colors={[
+                    '#e893b9',
+                    '#ff968a',
+                    '#f5af58',
+                    '#b9d04c',
+                    '#12eb8c',
+                  ]}
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={styles.tileHeader}
+                />
+                <Animated.View
+                  style={[
+                    styles.tileContent,
+                    {
+                      transform: [
+                        {
+                          rotateX: rotateTile2.interpolate({
+                            inputRange: [-90, 0],
+                            outputRange: ['-90deg', '-0deg'],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
                 >
-                  <Text style={styles.tileText}>Тест на счет</Text>
-                </ImageBackground>
-              </Animated.View>
-            </Pressable>
+                  <ImageBackground
+                    blurRadius={10}
+                    alt="tutorial_test_count"
+                    source={require('../assets/images/tutorial_test_count.jpg')}
+                    style={styles.imageContainer}
+                  >
+                    <Text style={styles.tileText}>Тест на счет</Text>
+                  </ImageBackground>
+                </Animated.View>
+              </Pressable>
+            </Link>
           </Animated.View>
           <Animated.View
             style={[

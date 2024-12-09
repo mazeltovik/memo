@@ -1,18 +1,11 @@
 import {
-  ScrollView,
   Text,
   StyleSheet,
   View,
   Pressable,
-  useWindowDimensions,
   useAnimatedValue,
   Animated,
-  Image,
   ImageBackground,
-  TextInput,
-  Button,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
 } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -52,10 +45,6 @@ export default function Tutorial() {
       <SafeAreaView style={styles.container}>
         <Animated.View
           style={[
-            {
-              borderBottomLeftRadius: 8,
-              borderBottomRightRadius: 8,
-            },
             {
               transform: [{ scaleX: scale1.x }, { scaleY: scale1.y }],
             },
@@ -124,7 +113,16 @@ export default function Tutorial() {
                     ],
                   },
                 ]}
-              ></Animated.View>
+              >
+                <ImageBackground
+                  blurRadius={10}
+                  alt="tutorial_test_count"
+                  source={require('../assets/images/tutorial_test_count.jpg')}
+                  style={styles.imageContainer}
+                >
+                  <Text style={styles.tileText}>Тест на счет</Text>
+                </ImageBackground>
+              </Animated.View>
             </Pressable>
           </Animated.View>
           <Animated.View
@@ -156,7 +154,16 @@ export default function Tutorial() {
                     ],
                   },
                 ]}
-              ></Animated.View>
+              >
+                <ImageBackground
+                  blurRadius={10}
+                  alt="tutorial_test_words"
+                  source={require('../assets/images/tutorial_test_words.jpg')}
+                  style={styles.imageContainer}
+                >
+                  <Text style={styles.tileText}>Тест на слова</Text>
+                </ImageBackground>
+              </Animated.View>
             </Pressable>
           </Animated.View>
         </View>
@@ -207,5 +214,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'Nunito-Regular',
     fontSize: 20,
+    lineHeight: 25,
   },
 });

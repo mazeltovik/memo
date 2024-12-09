@@ -7,6 +7,7 @@ import {
   Animated,
   ImageBackground,
 } from 'react-native';
+import { Link } from 'expo-router';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import useOnPressAnim from './hooks/onPress';
@@ -50,38 +51,40 @@ export default function Tutorial() {
             },
           ]}
         >
-          <Pressable onPress={onPress1} style={[styles.tileContainer]}>
-            <LinearGradient
-              colors={['#e893e5', '#ff85b2', '#ff9768', '#ffc20e', '#a8eb12']}
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              style={styles.tileHeader}
-            />
-            <Animated.View
-              style={[
-                styles.tileContent,
-                {
-                  transform: [
-                    {
-                      rotateX: rotateTile1.interpolate({
-                        inputRange: [-90, 0],
-                        outputRange: ['-90deg', '-0deg'],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            >
-              <ImageBackground
-                blurRadius={2}
-                alt="notebook"
-                source={require('../assets/images/notebook.jpg')}
-                style={styles.imageContainer}
+          <Link href={'/tutorialDescription'} asChild>
+            <Pressable onPress={onPress1} style={[styles.tileContainer]}>
+              <LinearGradient
+                colors={['#e893e5', '#ff85b2', '#ff9768', '#ffc20e', '#a8eb12']}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.tileHeader}
+              />
+              <Animated.View
+                style={[
+                  styles.tileContent,
+                  {
+                    transform: [
+                      {
+                        rotateX: rotateTile1.interpolate({
+                          inputRange: [-90, 0],
+                          outputRange: ['-90deg', '-0deg'],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
               >
-                <Text style={styles.tileText}>Обучение</Text>
-              </ImageBackground>
-            </Animated.View>
-          </Pressable>
+                <ImageBackground
+                  blurRadius={2}
+                  alt="notebook"
+                  source={require('../assets/images/notebook.jpg')}
+                  style={styles.imageContainer}
+                >
+                  <Text style={styles.tileText}>Обучение</Text>
+                </ImageBackground>
+              </Animated.View>
+            </Pressable>
+          </Link>
         </Animated.View>
         <View style={styles.doubleSection}>
           <Animated.View

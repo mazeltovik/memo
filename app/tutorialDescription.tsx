@@ -8,6 +8,7 @@ import {
   Animated,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { Link } from 'expo-router';
 import useOnPressAnim from './hooks/onPress';
 
 type SlideProps = {
@@ -61,18 +62,20 @@ function TutorialCountTest({ windowWidth }: SlideProps) {
           Вам необходимо засечь время, которое потребуется на то, чтобы
           сосчитать от 1 до 120 вслух как можно быстрее.
         </Text>
-        <Pressable onPress={onPress} style={[tutorialStyles.pressContainer]}>
-          <Animated.Text
-            style={[
-              tutorialStyles.pressText,
-              {
-                transform: [{ scaleX: scales.x }, { scaleY: scales.y }],
-              },
-            ]}
-          >
-            Приступить
-          </Animated.Text>
-        </Pressable>
+        <Link href={'./training/countTest'} asChild>
+          <Pressable onPress={onPress} style={[tutorialStyles.pressContainer]}>
+            <Animated.Text
+              style={[
+                tutorialStyles.pressText,
+                {
+                  transform: [{ scaleX: scales.x }, { scaleY: scales.y }],
+                },
+              ]}
+            >
+              Приступить
+            </Animated.Text>
+          </Pressable>
+        </Link>
       </View>
       <View style={tutorialStyles.animationContainer}>
         <LottieView

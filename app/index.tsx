@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import Carousel from './components/carousel';
-import PreliminaryAssessment from './components/assessment';
 import Tutorial from './tutorial';
+import WordTest from './training/wordTest';
 
 const DATA = [
   {
@@ -34,7 +34,7 @@ const DATA = [
 ];
 
 export default function App() {
-  return <Tutorial />;
+  return <WordTest />;
 }
 
 // type FadeInViewProps = PropsWithChildren<{style: ViewStyle}>;

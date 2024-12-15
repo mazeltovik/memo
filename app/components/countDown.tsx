@@ -79,10 +79,10 @@ export default function Countdown({
   }, [scalesAnim, coords, hoursDegree, secondsDegree]);
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined = undefined;
-    if (time < 25 && !start) {
+    if (time < 27 && !start) {
       setStart(true);
       animatedWaves.start();
-      Vibration.vibrate();
+      // Vibration.vibrate();
     }
     if (time == 0) {
       setStart(false);
@@ -189,6 +189,8 @@ export default function Countdown({
 
 const countdownStyles = StyleSheet.create({
   container: {
+    position: 'absolute',
+    zIndex: 100,
     width: 140,
     height: 140,
     borderRadius: '50%',

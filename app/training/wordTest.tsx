@@ -13,6 +13,8 @@ import { useWindowDimensions } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import Countdown from '../components/countDown';
 import WordsList from '../components/wordsList';
+import SwipeList from '../components/swipeList';
+import SwipeCard from '../components/swipeCard';
 import useOnPressAnim from '../hooks/onPress';
 
 export default function WordTest() {
@@ -23,7 +25,7 @@ export default function WordTest() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={wordTestStyles.container}>
-        <Countdown
+        {/* <Countdown
           time={time}
           setTime={setTime}
           windowWidth={windowWidth}
@@ -49,7 +51,8 @@ export default function WordTest() {
               вперед
             </Animated.Text>
           </Pressable>
-        </Animated.View>
+        </Animated.View> */}
+        <SwipeList windowWidth={windowWidth} windowHeight={windowHeight} />
       </SafeAreaView>
     </SafeAreaProvider>
   );

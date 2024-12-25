@@ -19,7 +19,7 @@ export default function WordTile({
   useEffect(() => {
     Animated.timing(translateX, {
       toValue: 0,
-      duration: (basicDuration * duration) / 2,
+      duration: (basicDuration * duration) / 4,
       useNativeDriver: true,
     }).start();
   }, [translateX]);

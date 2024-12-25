@@ -1,6 +1,7 @@
 import { memo } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import WordTile from '../components/wordTile';
+import ButtonWrapper, { WordListBtn } from './buttonWrapper';
 
 const words = [
   'полдень',
@@ -20,23 +21,51 @@ const words = [
 
 type wordListType = {
   windowWidth: number;
+  setShowWordList: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSwipeList: React.Dispatch<React.SetStateAction<boolean>>;
+  setStopTime: React.Dispatch<React.SetStateAction<boolean>>;
 };
-function List({ windowWidth }: wordListType) {
+function List({
+  windowWidth,
+  setShowWordList,
+  setShowSwipeList,
+  setStopTime,
+}: wordListType) {
   return (
-    <ScrollView style={{ marginTop: 140 }}>
-      {words.map((word, index) => {
-        return (
-          <WordTile
-            word={word}
-            windowWidth={windowWidth}
-            duration={index++}
-            key={index}
-          />
-        );
-      })}
-    </ScrollView>
+    <View style={styles.wrapper}>
+      <ScrollView style={styles.scrollContainer}>
+        {words.map((word, index) => {
+          return (
+            <WordTile
+              word={word}
+              windowWidth={windowWidth}
+              duration={index++}
+              key={index}
+            />
+          );
+        })}
+      </ScrollView>
+      <ButtonWrapper>
+        <WordListBtn
+          text="вперед"
+          setShowWordList={setShowWordList}
+          setShowSwipeList={setShowSwipeList}
+          setStopTime={setStopTime}
+        />
+      </ButtonWrapper>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    justifyContent: 'center',
+  },
+  scrollContainer: {
+    marginTop: 140,
+    height: '70%',
+  },
+});
 
 const WordsList = memo(List);
 export default WordsList;

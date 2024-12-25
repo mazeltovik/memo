@@ -15,13 +15,21 @@ import {
 type SwipeCardProps = {
   word: string;
   windowHeight: number;
-  setWords: React.Dispatch<React.SetStateAction<string[]>>;
+  removeTopCard: () => void;
+  approved: string[];
+  rejected: string[];
+  setApproved: React.Dispatch<React.SetStateAction<string[]>>;
+  setRejected: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export default function SwipeCard({
   word,
-  setWords,
   windowHeight,
+  removeTopCard,
+  approved,
+  rejected,
+  setApproved,
+  setRejected,
 }: SwipeCardProps) {
   const swipe = useRef(new Animated.ValueXY()).current;
   const titlSign = useRef(new Animated.Value(1)).current;
@@ -43,7 +51,14 @@ export default function SwipeCard({
               y: dy,
             },
             useNativeDriver: true,
-          }).start(removeTopCard);
+          }).start(() => {
+            if (~diraction) {
+              setApproved([...approved, word]);
+            } else {
+              setRejected([...rejected, word]);
+            }
+            removeTopCard();
+          });
           return;
         }
         Animated.spring(swipe, {
@@ -71,11 +86,6 @@ export default function SwipeCard({
     outputRange: [1, 0],
     extrapolate: 'clamp',
   });
-  const removeTopCard = useCallback(() => {
-    setWords((prevState) => {
-      return prevState.slice(1);
-    });
-  }, [setWords]);
   return (
     <Animated.View
       style={[

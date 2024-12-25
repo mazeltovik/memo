@@ -1,87 +1,83 @@
-import { SetStateAction, useEffect, useState } from 'react';
-import {
-  Text,
-  StyleSheet,
-  View,
-  Pressable,
-  TextInput,
-  Animated,
-  useAnimatedValue,
-  ScrollView,
-} from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import Countdown from '../components/countDown';
 import WordsList from '../components/wordsList';
 import SwipeList from '../components/swipeList';
-import SwipeCard from '../components/swipeCard';
-import useOnPressAnim from '../hooks/onPress';
+import Intro from './wordTestSlides/intro';
 
 export default function WordTest() {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const [showIntro, setShowIntro] = useState(false);
+  const [showWordList, setShowWordList] = useState(false);
+  const [showSwipeList, setShowSwipeList] = useState(true);
   const [time, setTime] = useState(50);
+  const [stopTime, setStopTime] = useState(false);
   const [finishedTranslate, setFinishedTranslate] = useState(false);
-  const { scales, onPress } = useOnPressAnim();
+  const [approved, setApproved] = useState<string[]>([]);
+  const [rejected, setRejected] = useState<string[]>([]);
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={wordTestStyles.container}>
-        {/* <Countdown
-          time={time}
-          setTime={setTime}
-          windowWidth={windowWidth}
-          windowHeight={windowHeight}
-          finishedTranslate={finishedTranslate}
-          setFinishedTranslate={setFinishedTranslate}
-        />
-        {finishedTranslate && <WordsList windowWidth={windowWidth} />}
-        <Animated.View
-          style={[
-            wordTestStyles.pressContainer,
-            {
-              transform: [{ scaleX: scales.x }, { scaleY: scales.y }],
-            },
-          ]}
-        >
-          <Pressable
-            onPress={() => {
-              onPress();
-            }}
-          >
-            <Animated.Text style={[wordTestStyles.pressText]}>
-              вперед
-            </Animated.Text>
-          </Pressable>
-        </Animated.View> */}
-        <SwipeList windowWidth={windowWidth} windowHeight={windowHeight} />
+      <SafeAreaView style={wordTestStyles.wrapper}>
+        <View style={wordTestStyles.container}>
+          {showIntro && (
+            <Intro
+              setShowIntro={setShowIntro}
+              setShowWordList={setShowWordList}
+            />
+          )}
+          {showWordList && (
+            <View style={wordTestStyles.wordListContainer}>
+              <Countdown
+                time={time}
+                stopTime={stopTime}
+                setTime={setTime}
+                windowWidth={windowWidth}
+                windowHeight={windowHeight}
+                finishedTranslate={finishedTranslate}
+                setFinishedTranslate={setFinishedTranslate}
+                setShowWordList={setShowWordList}
+                setShowSwipeList={setShowSwipeList}
+              />
+              {finishedTranslate && (
+                <WordsList
+                  windowWidth={windowWidth}
+                  setShowWordList={setShowWordList}
+                  setShowSwipeList={setShowSwipeList}
+                  setStopTime={setStopTime}
+                />
+              )}
+            </View>
+          )}
+          {showSwipeList && (
+            <SwipeList
+              windowHeight={windowHeight}
+              approved={approved}
+              setApproved={setApproved}
+              rejected={rejected}
+              setRejected={setRejected}
+            />
+          )}
+        </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
 const wordTestStyles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#1d2029',
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#1d2029',
     paddingLeft: 16,
     paddingRight: 16,
   },
-  pressContainer: {
-    marginTop: 16,
-    marginBottom: 16,
-    width: '100%',
-    borderRadius: 10,
-    height: 50,
+  wordListContainer: {
+    flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#333a56',
-  },
-  pressText: {
-    paddingTop: 8,
-    paddingBottom: 8,
-    color: 'white',
-    fontFamily: 'Nunito-Regular',
-    textAlign: 'center',
-    textTransform: 'capitalize',
+    alignItems: 'center',
   },
 });

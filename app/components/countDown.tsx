@@ -11,20 +11,26 @@ import useWaveAnim from '../hooks/useWaveAnim';
 
 type CountdownTypes = {
   time: number;
+  stopTime: boolean;
   setTime: React.Dispatch<React.SetStateAction<number>>;
   windowWidth: number;
   windowHeight: number;
   finishedTranslate: boolean;
   setFinishedTranslate: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowWordList: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSwipeList: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function Countdown({
   time,
+  stopTime,
   setTime,
   windowHeight,
   windowWidth,
   finishedTranslate,
   setFinishedTranslate,
+  setShowWordList,
+  setShowSwipeList,
 }: CountdownTypes) {
   const {
     animatedWaves,
@@ -86,9 +92,11 @@ export default function Countdown({
     }
     if (time == 0) {
       setStart(false);
+      setShowWordList(false);
+      setShowSwipeList(true);
       animatedWaves.stop();
     }
-    if (time != 0 && finishedTranslate) {
+    if (time != 0 && finishedTranslate && !stopTime) {
       interval = setInterval(() => {
         setTime((time) => time - 1);
       }, 1000);
@@ -96,7 +104,14 @@ export default function Countdown({
     return () => {
       clearInterval(interval);
     };
-  }, [time, finishedTranslate, opacity, scaleInnerWave, scaleOuterWave]);
+  }, [
+    time,
+    stopTime,
+    finishedTranslate,
+    opacity,
+    scaleInnerWave,
+    scaleOuterWave,
+  ]);
   return (
     <Animated.View
       style={[

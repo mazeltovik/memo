@@ -6,12 +6,14 @@ import Countdown from '../components/countDown';
 import WordsList from '../components/wordsList';
 import SwipeList from '../components/swipeList';
 import Intro from './wordTestSlides/intro';
+import ResTxt from '../components/wordTestRes';
 
 export default function WordTest() {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const [showIntro, setShowIntro] = useState(false);
   const [showWordList, setShowWordList] = useState(false);
-  const [showSwipeList, setShowSwipeList] = useState(true);
+  const [showSwipeList, setShowSwipeList] = useState(false);
+  const [showResult, setShowResult] = useState(true);
   const [time, setTime] = useState(50);
   const [stopTime, setStopTime] = useState(false);
   const [finishedTranslate, setFinishedTranslate] = useState(false);
@@ -59,6 +61,7 @@ export default function WordTest() {
               setRejected={setRejected}
             />
           )}
+          {showResult && <ResTxt />}
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

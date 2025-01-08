@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
 import SwipeCard from './swipeCard';
 import ButtonWrapper, { SwipeBtn } from './buttonWrapper';
+import shuffle from '../scripts/shuffle';
 
 type SwipeListProps = {
   windowHeight: number;
@@ -19,21 +20,41 @@ export default function SwipeList({
   rejected,
   setRejected,
 }: SwipeListProps) {
-  const [words, setWords] = useState([
-    'полдень',
-    'секция',
-    'тюбик',
-    'медведь',
-    'рюкзак',
-    'сироп',
-    'цвет',
-    'ремень',
-    'брат',
-    'бумага',
-    'разум',
-    'точка',
-    'офис',
-  ]);
+  const [words, setWords] = useState<string[]>([]);
+  useMemo(() => {
+    const rightWords = [
+      'полдень',
+      'секция',
+      'тюбик',
+      'медведь',
+      'рюкзак',
+      'сироп',
+      'цвет',
+      'ремень',
+      'брат',
+      'бумага',
+      'разум',
+      'точка',
+      'офис',
+    ];
+    const wrongWords = [
+      'рис',
+      'поэма',
+      'пример',
+      'воздух',
+      'доска',
+      'право',
+      'ценность',
+      'плавание',
+      'сторона',
+      'танец',
+      'лодка',
+    ];
+    const shuffleRightWords = shuffle(rightWords).slice(7);
+    const shuffleWrongWords = shuffle(wrongWords).slice(3);
+    const totalRes = shuffle([...shuffleRightWords, ...shuffleWrongWords]);
+    setWords(totalRes);
+  }, []);
   const removeTopCard = useCallback(() => {
     setWords((prevState) => {
       return prevState.slice(1);

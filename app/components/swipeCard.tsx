@@ -52,11 +52,11 @@ export default function SwipeCard({
             },
             useNativeDriver: true,
           }).start(() => {
-            if (~diraction) {
-              setApproved([...approved, word]);
-            } else {
-              setRejected([...rejected, word]);
-            }
+            // if (~diraction) {
+            //   setApproved([...approved, word]);
+            // } else {
+            //   setRejected([...rejected, word]);
+            // }
             removeTopCard();
           });
           return;

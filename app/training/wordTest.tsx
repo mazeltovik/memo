@@ -12,8 +12,8 @@ export default function WordTest() {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const [showIntro, setShowIntro] = useState(false);
   const [showWordList, setShowWordList] = useState(false);
-  const [showSwipeList, setShowSwipeList] = useState(false);
-  const [showResult, setShowResult] = useState(true);
+  const [showSwipeList, setShowSwipeList] = useState(true);
+  const [showResult, setShowResult] = useState(false);
   const [time, setTime] = useState(50);
   const [stopTime, setStopTime] = useState(false);
   const [finishedTranslate, setFinishedTranslate] = useState(false);

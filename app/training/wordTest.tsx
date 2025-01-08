@@ -6,7 +6,7 @@ import Countdown from '../components/countDown';
 import WordsList from '../components/wordsList';
 import SwipeList from '../components/swipeList';
 import Intro from './wordTestSlides/intro';
-import ResTxt from '../components/wordTestRes';
+import WordTestRes from '../components/wordTestRes';
 
 export default function WordTest() {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
@@ -61,7 +61,7 @@ export default function WordTest() {
               setRejected={setRejected}
             />
           )}
-          {showResult && <ResTxt />}
+          {showResult && <WordTestRes />}
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

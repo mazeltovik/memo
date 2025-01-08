@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import useCountUp from '../hooks/useCountUp';
-import { transform } from '@babel/core';
-export default function ResTxt() {
+
+export default function WordTestRes() {
   const { count: countTime, countUp: countUpTime } = useCountUp(80);
   const { count: correctCount, countUp: countUpCorrect } = useCountUp(15);
   const { count, countUp } = useCountUp(100, 4000);

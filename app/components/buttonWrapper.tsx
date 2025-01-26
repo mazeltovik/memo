@@ -19,8 +19,72 @@ type SwipeBtn = {
   text: string;
 };
 
+type CalcChallenge = {
+  text: string;
+  onClick: () => void;
+};
+
+type BtnContainer = {
+  text: string;
+  onClick: () => void;
+};
+
 export default function ButtonWrapper({ children }: PropsWithChildren) {
   return <View>{children}</View>;
+}
+
+export function ButtonContainer({ text, onClick }: BtnContainer) {
+  const { scales, onPress } = useOnPressAnim();
+  return (
+    <Animated.View
+      style={[
+        basicBtn.pressContainer,
+        {
+          transform: [
+            { scaleX: scales.x },
+            { scaleY: scales.y },
+            { perspective: 1000 },
+          ],
+        },
+      ]}
+    >
+      <Pressable
+        onPress={() => {
+          onPress();
+          onClick();
+        }}
+      >
+        <Animated.Text style={[basicBtn.pressText]}>{text}</Animated.Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+export function CalcChallengeBtn({ text, onClick }: CalcChallenge) {
+  const { scales, onPress } = useOnPressAnim();
+  return (
+    <Animated.View
+      style={[
+        basicBtn.pressContainer,
+        {
+          transform: [
+            { scaleX: scales.x },
+            { scaleY: scales.y },
+            { perspective: 1000 },
+          ],
+        },
+      ]}
+    >
+      <Pressable
+        onPress={() => {
+          onPress();
+          onClick();
+        }}
+      >
+        <Animated.Text style={[basicBtn.pressText]}>{text}</Animated.Text>
+      </Pressable>
+    </Animated.View>
+  );
 }
 
 export function IntroButton({

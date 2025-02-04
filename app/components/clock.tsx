@@ -58,7 +58,7 @@ export default function Clock({
             useNativeDriver: true,
           }),
           Animated.timing(coords, {
-            toValue: { x: windowWidth / 2 - 54, y: -windowHeight / 2 + 96 },
+            toValue: { x: windowWidth / 2 - 70, y: -windowHeight / 2 + 64 },
             duration: 2000,
             useNativeDriver: true,
           }),
@@ -152,7 +152,7 @@ const clockStyles = StyleSheet.create({
     paddingRight: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1d2029',
+    backgroundColor: '#f6c25d',
   },
   animatedContainer: {
     position: 'absolute',
@@ -160,8 +160,8 @@ const clockStyles = StyleSheet.create({
     height: 70,
     borderRadius: 50,
     borderWidth: 5,
-    borderColor: '#495278',
-    backgroundColor: 'white',
+    borderColor: '#f6c25d',
+    backgroundColor: '#333a56',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -176,7 +176,7 @@ const clockStyles = StyleSheet.create({
   hours: {
     position: 'absolute',
     top: 5,
-    backgroundColor: '#252b43',
+    backgroundColor: '#fbd499',
     height: '30%',
     width: 4,
     marginTop: 25,
@@ -186,7 +186,7 @@ const clockStyles = StyleSheet.create({
   seconds: {
     position: 'absolute',
     top: 5,
-    backgroundColor: '#bd4c5e',
+    backgroundColor: '#a52b36',
     height: '45%',
     width: 2,
     marginTop: 25,
@@ -196,6 +196,8 @@ const clockStyles = StyleSheet.create({
   clockCounter: {
     width: '100%',
     textAlign: 'center',
-    fontFamily: 'Nunito-Regular',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    color: '#fbd499',
   },
 });

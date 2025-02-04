@@ -73,7 +73,7 @@ export default function Countdown({
             useNativeDriver: true,
           }),
           Animated.timing(coords, {
-            toValue: { x: windowWidth / 2 - 54, y: -windowHeight / 2 + 96 },
+            toValue: { x: windowWidth / 2 - 70, y: -windowHeight / 2 + 64 },
             duration: 2000,
             useNativeDriver: true,
           }),
@@ -219,15 +219,17 @@ const countdownStyles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: '50%',
-    backgroundColor: 'white',
+    backgroundColor: '#333a56',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 5,
-    borderColor: '#495278',
+    borderColor: '#f6c25d',
   },
   countdownText: {
     textAlign: 'center',
-    fontFamily: 'Nunito-Regular',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    color: '#fbd499',
   },
   outerWave: {
     position: 'absolute',
@@ -259,7 +261,7 @@ const countdownStyles = StyleSheet.create({
   hours: {
     position: 'absolute',
     top: 5,
-    backgroundColor: '#252b43',
+    backgroundColor: '#fbd499',
     height: '30%',
     width: 4,
     marginTop: 25,
@@ -269,7 +271,7 @@ const countdownStyles = StyleSheet.create({
   seconds: {
     position: 'absolute',
     top: 5,
-    backgroundColor: '#bd4c5e',
+    backgroundColor: '#a52b36',
     height: '45%',
     width: 2,
     marginTop: 25,

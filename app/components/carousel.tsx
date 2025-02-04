@@ -1,17 +1,11 @@
-import { useState } from 'react';
 import {
   ScrollView,
   Text,
   StyleSheet,
   View,
   useWindowDimensions,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
-import MainModal from './modal';
-import InstructionModal from './modals/instructionModal';
-import slidesData from '@/static/slidesData';
 
 type SlideProps = {
   mainHeader: string;
@@ -19,6 +13,15 @@ type SlideProps = {
   slideIndex: number;
   maxSlides: number;
   windowWidth: number;
+};
+
+type SlideData = {
+  mainHeader: string;
+  info: string;
+};
+
+type CarouselProps = {
+  data: SlideData[];
 };
 
 function Slide({
@@ -29,7 +32,7 @@ function Slide({
   maxSlides,
 }: SlideProps) {
   return (
-    <View style={[slideStyles.slideContainer, { width: windowWidth }]}>
+    <View style={[slideStyles.slideContainer, { width: windowWidth - 32 }]}>
       <View style={slideStyles.slideHeader}>
         <Text style={slideStyles.mainHeader}>{mainHeader}</Text>
         <Text style={slideStyles.info} android_hyphenationFrequency="full">
@@ -53,9 +56,8 @@ function Slide({
   );
 }
 
-export default function Carousel() {
+export default function Carousel({ data }: CarouselProps) {
   const { width: windowWidth } = useWindowDimensions();
-  const [modalVisible, setModalVisible] = useState(false);
   return (
     <View style={carouselStyles.scrollContainer}>
       <ScrollView
@@ -63,15 +65,8 @@ export default function Carousel() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={1}
-        onScroll={(event: NativeSyntheticEvent<NativeScrollEvent>) => {
-          const scrollX = Math.floor(event.nativeEvent.contentOffset.x);
-          const totalWidth = Math.floor(windowWidth * (slidesData.length - 1));
-          if (scrollX == totalWidth) {
-            setModalVisible(true);
-          }
-        }}
       >
-        {slidesData.map((slide, slideIndex, slides) => {
+        {data.map((slide, slideIndex, slides) => {
           return (
             <Slide
               mainHeader={slide.mainHeader}
@@ -84,17 +79,6 @@ export default function Carousel() {
           );
         })}
       </ScrollView>
-      {modalVisible && (
-        <MainModal
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-        >
-          <InstructionModal
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
-          />
-        </MainModal>
-      )}
     </View>
   );
 }
@@ -106,30 +90,31 @@ const slideStyles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   slideHeader: {
-    // backgroundColor:'#fcba03',
     gap: 16,
     flexGrow: 0.5,
     justifyContent: 'flex-end',
   },
   animationContainer: {
     alignItems: 'flex-end',
-    // backgroundColor: '#fcba03'
   },
   lottieContainer: {
     width: 80,
     height: 80,
-    backgroundColor: '#c9ccf0',
+    backgroundColor: '#1d2029',
   },
   mainHeader: {
+    color: '#daa543',
     textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
     paddingTop: 8,
-    fontFamily: 'Nunito-Bold',
   },
   info: {
-    // marginLeft:8,
-    // marginRight:8,
     textAlign: 'justify',
-    fontFamily: 'Nunito-Regular',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    color: '#fbd499',
   },
 });
 
@@ -138,6 +123,6 @@ const carouselStyles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#c9ccf0',
+    backgroundColor: '#1d2029',
   },
 });

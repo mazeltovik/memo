@@ -1,227 +1,90 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  ScrollView,
-  Text,
-  StyleSheet,
-  View,
-  ImageBackground,
-  Animated,
-  useWindowDimensions,
-  useAnimatedValue,
-} from 'react-native';
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import Carousel from './components/carousel';
-import Tutorial from './tutorial';
-import WordTest from './training/wordTest';
-import MainChallenge from './challenges/mainChallenge';
+import { Text, StyleSheet, View } from 'react-native';
+import MenuItem from './components/menuItem';
+// import Carousel from './components/carousel';
+// import introSlides from './slides/intro/introSlides';
+// import Tutorial from './tutorial';
+// import WordTest from './training/wordTest';
+// import MainChallenge from './challenge';
+//////////////////////////////////////
+// import CountTest from './training/countTest';
+// import MemoryTest from './training/memoryTest';
 
-const DATA = [
-  {
-    id: '1',
-    title: 'First Item',
-  },
-  {
-    id: '2',
-    title: 'Second Item',
-  },
-  {
-    id: '3',
-    title: 'Third Item',
-  },
-  {
-    id: '4',
-    title: 'Fourth Item',
-  },
-];
+const localAssets = {
+  exercise: require('../assets/images/brain.svg'),
+  training: require('../assets/images/tests.svg'),
+  learning: require('../assets/images/book-open-text.svg'),
+  statistic: require('../assets/images/chart-line.svg'),
+};
 
 export default function App() {
-  return <MainChallenge />;
+  return (
+    <View style={styles.wrapper}>
+      <View>
+        <Text style={styles.header}>Memo</Text>
+      </View>
+      <View style={styles.navWrapper}>
+        <View style={styles.navContainer}>
+          <MenuItem
+            text={'тренировка'}
+            href={'/challenge'}
+            path={localAssets.exercise}
+          />
+          <MenuItem
+            text={'тесты'}
+            href={'/testing'}
+            path={localAssets.training}
+          />
+        </View>
+        <View style={styles.navContainer}>
+          <MenuItem
+            text={'обучение'}
+            href={'/learning'}
+            path={localAssets.learning}
+          />
+          <MenuItem
+            text={'статистика'}
+            href={''}
+            path={localAssets.statistic}
+          />
+        </View>
+      </View>
+      <View>
+        <Text style={styles.footerText}>{new Date().getFullYear()}</Text>
+      </View>
+    </View>
+  );
 }
 
-// type FadeInViewProps = PropsWithChildren<{style: ViewStyle}>;
-
-// const FadeInView: React.FC<FadeInViewProps> = props => {
-//    // Initial value for opacity: 0
-//   const start = useAnimatedValue(100);
-//   const finish = useAnimatedValue(300);
-
-//   useEffect(() => {
-//     Animated.loop(
-//       Animated.sequence([
-//         Animated.timing(start, {
-//           toValue: 300,
-//           duration: 2000,
-//           useNativeDriver: true,
-//         }),
-//         Animated.timing(start, {
-//           toValue: 100,
-//           duration: 2000,
-//           useNativeDriver: true,
-//         }),
-//       ])
-//     ).start();
-//     setTimeout(()=>{
-//       start.stopAnimation();
-//     },10000)
-//   }, []);
-
-//   return (
-//     <Animated.View // Special animatable View
-//       style={{
-//         ...props.style,
-//          // Bind opacity to animated value
-//          transform:[{
-//           translateY:start
-//         }]
-//       }}>
-//       <Text>Hello</Text>
-//     </Animated.View>
-//   );
-// };
-
-// // You can then use your `FadeInView` in place of a `View` in your components:
-// export default () => {
-//   return (
-//     <View
-//       style={{
-//         flex: 1,
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//       }}>
-//       <FadeInView
-//         style={{
-//           width: 250,
-//           height: 50,
-//           backgroundColor: 'powderblue',
-//         }}>
-//         <Text style={{fontSize: 28, margin: 10}}>
-//           Fading in
-//         </Text>
-//       </FadeInView>
-//     </View>
-//   );
-// };
-
-// // export default function Index() {
-// //   // const scrollX = useAnimatedValue(0);
-
-// //   const {width: windowWidth} = useWindowDimensions();
-
-// //   const fadeAnim = useAnimatedValue(0); // Initial value for opacity: 0
-// //   console.log(fadeAnim);
-// //   useEffect(() => {
-// //     Animated.timing(fadeAnim, {
-// //       toValue: 1,
-// //       duration: 20000,
-// //       useNativeDriver: true,
-// //     }).start();
-// //   }, [fadeAnim]);
-
-// //   return (
-// //     <Animated.View style={{
-// //       opacity: fadeAnim, // Bind opacity to animated value
-// //     }}> // Special animatable View
-// //       Fading
-// //     </Animated.View>
-// //   );
-// // }
-
-// {/* <SafeAreaProvider>
-// <SafeAreaView style={styles.container}>
-//   <View style={styles.scrollContainer}>
-//     <ScrollView
-//       horizontal={true}
-//       pagingEnabled
-//       showsHorizontalScrollIndicator={false}
-//       onScroll={Animated.event([
-//         {
-//           nativeEvent: {
-//             contentOffset: {
-//               x: scrollX,
-//             },
-//           },
-//         },
-//       ])}
-//       scrollEventThrottle={1}>
-//       {DATA.map((image, imageIndex) => {
-//         return (
-//           <View
-//             style={{width: windowWidth, height: 250}}
-//             key={imageIndex}>
-//             <View style={styles.textContainer}>
-//                 <Text style={styles.infoText}>
-//                   {'Image - ' + imageIndex}
-//                 </Text>
-//               </View>
-//           </View>
-//         );
-//       })}
-//     </ScrollView>
-//     <View style={styles.indicatorContainer}>
-//       {DATA.map((image, imageIndex) => {
-//         const width = scrollX.interpolate({
-//           inputRange: [
-//             windowWidth * (imageIndex - 1),
-//             windowWidth * imageIndex,
-//             windowWidth * (imageIndex + 1),
-//           ],
-//           outputRange: [8, 16, 8],
-//           extrapolate: 'clamp',
-//         });
-//         return (
-//           <Animated.View
-//             key={imageIndex}
-//             style={[styles.normalDot, {width}]}
-//           />
-//         );
-//       })}
-//     </View>
-//   </View>
-// </SafeAreaView>
-// </SafeAreaProvider> */}
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   scrollContainer: {
-//     height: 300,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   card: {
-//     flex: 1,
-//     marginVertical: 4,
-//     marginHorizontal: 16,
-//     borderRadius: 5,
-//     overflow: 'hidden',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   textContainer: {
-//     backgroundColor: 'rgba(0,0,0, 0.7)',
-//     paddingHorizontal: 24,
-//     paddingVertical: 8,
-//     borderRadius: 5,
-//     width: 500,
-//     height:200
-//   },
-//   infoText: {
-//     color: 'white',
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//   },
-//   normalDot: {
-//     height: 8,
-//     width: 8,
-//     borderRadius: 4,
-//     backgroundColor: 'silver',
-//     marginHorizontal: 4,
-//   },
-//   indicatorContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    paddingTop: 16,
+    paddingBottom: 16,
+    backgroundColor: '#1d2029',
+    justifyContent: 'space-between',
+  },
+  header: {
+    color: '#daa543',
+    textAlign: 'center',
+    fontSize: 64,
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+  },
+  navWrapper: {
+    gap: 16,
+  },
+  navContainer: {
+    width: '100%',
+    justifyContent: 'space-evenly',
+    gap: 16,
+    flexDirection: 'row',
+  },
+  footerText: {
+    color: '#f6c25d',
+    fontSize: 10,
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    textAlign: 'center',
+  },
+});

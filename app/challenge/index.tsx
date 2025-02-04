@@ -6,38 +6,32 @@ import {
   TextInput,
   useAnimatedValue,
   Animated,
-  ScrollView,
 } from 'react-native';
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import LottieView from 'lottie-react-native';
 import ButtonWrapper, {
   CalcChallengeBtn,
   ButtonContainer,
 } from '../components/buttonWrapper';
 import ProgressBar from '../components/progressBar';
-import MainChallengeRes from '../components/mainChallengeRes';
+import MainChallengeRes from './mainChallengeRes';
 import getRandomInt, { getRandomEvenInt } from '../scripts/getRandomInt';
 
 enum ChallengeSettings {
-  totalChallenge = 100,
-  plusChallenge = 31,
-  minusChallenge = 31,
-  multiplyChallenge = 31,
-  divideChallenge = 7,
-}
-
-export enum Evaluation {
-  gold = 90,
-  silver = 120,
-  bronze = 150,
+  totalChallenge = 10,
+  plusChallenge = 3,
+  minusChallenge = 3,
+  multiplyChallenge = 3,
+  divideChallenge = 1,
 }
 
 type Operations = '_' | '+' | '-' | '*' | '/';
+
 type Challenge = {
   operation: Operations;
   amount: number;
 };
-export type Result = {
+
+type Result = {
   operand1: number;
   operand2: number;
   operation: string;
@@ -68,7 +62,7 @@ export default function MainChallenge() {
     { operation: '/', amount: ChallengeSettings.divideChallenge },
   ]);
   const totalTime = useRef({
-    startTime: Math.floor(Date.now() / 1000),
+    startTime: 0,
     finishTime: 0,
   }).current;
   const correct = useRef(0);
@@ -89,6 +83,9 @@ export default function MainChallenge() {
       useNativeDriver: true,
     }),
   ]);
+  useEffect(() => {
+    totalTime.startTime = Math.floor(Date.now() / 1000);
+  }, []);
   useEffect(() => {
     if (totalChallenge > 0) {
       const availableChallenge = challenges.current
@@ -165,99 +162,97 @@ export default function MainChallenge() {
     setSwitchToRes(true);
   };
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.wrapper}>
-        {!switchToRes && (
-          <View style={styles.challengeContainer}>
-            <ProgressBar
-              step={step}
-              steps={ChallengeSettings.totalChallenge}
-              height={4}
-            />
-            {totalChallenge > 0 && (
-              <View style={styles.challenge}>
-                <View style={styles.operandContainer}>
-                  <Animated.Text
-                    style={[
-                      styles.textOperand,
-                      {
-                        transform: [
-                          { translateY: translateY1 },
-                          { perspective: 1000 },
-                        ],
-                      },
-                      {
-                        opacity: opacity,
-                      },
-                    ]}
-                  >
-                    {challenge.operand1}
-                  </Animated.Text>
-                </View>
-                <View style={styles.operandContainer}>
-                  <Text style={styles.textOperand}>{challenge.operation}</Text>
-                </View>
-                <View style={styles.operandContainer}>
-                  <Animated.Text
-                    style={[
-                      styles.textOperand,
-                      {
-                        transform: [
-                          { translateY: translateY2 },
-                          { perspective: 1000 },
-                        ],
-                      },
-                      {
-                        opacity: opacity,
-                      },
-                    ]}
-                  >
-                    {challenge.operand2}
-                  </Animated.Text>
-                </View>
-              </View>
-            )}
-            {totalChallenge == 0 && (
-              <View style={styles.lottieWrapper}>
-                <LottieView
-                  autoPlay={true}
-                  loop={false}
-                  source={require('../../assets/animations/congratulations.json')}
-                  style={styles.lottieContainer}
-                />
-                <ButtonWrapper>
-                  <ButtonContainer text="результаты" onClick={showRes} />
-                </ButtonWrapper>
-              </View>
-            )}
-          </View>
-        )}
-        {totalChallenge > 0 && (
-          <View style={styles.resContainer}>
-            <TextInput
-              style={styles.textInput}
-              onChangeText={onChangeInput}
-              value={input}
-              placeholder="Введите результат"
-              placeholderTextColor={'white'}
-              keyboardType="numeric"
-            />
-            <ButtonWrapper>
-              <CalcChallengeBtn text="Далее" onClick={onClick} />
-            </ButtonWrapper>
-          </View>
-        )}
-        {switchToRes && (
-          <MainChallengeRes
-            startTime={totalTime.startTime}
-            finishTime={totalTime.finishTime}
-            results={results.current}
-            correct={correct.current}
-            totalChallenge={ChallengeSettings.totalChallenge}
+    <View style={styles.wrapper}>
+      {!switchToRes && (
+        <View style={styles.challengeContainer}>
+          <ProgressBar
+            step={step}
+            steps={ChallengeSettings.totalChallenge}
+            height={4}
           />
-        )}
-      </SafeAreaView>
-    </SafeAreaProvider>
+          {totalChallenge > 0 && (
+            <View style={styles.challenge}>
+              <View style={styles.operandContainer}>
+                <Animated.Text
+                  style={[
+                    styles.textOperand,
+                    {
+                      transform: [
+                        { translateY: translateY1 },
+                        { perspective: 1000 },
+                      ],
+                    },
+                    {
+                      opacity: opacity,
+                    },
+                  ]}
+                >
+                  {challenge.operand1}
+                </Animated.Text>
+              </View>
+              <View style={styles.operandContainer}>
+                <Text style={styles.textOperand}>{challenge.operation}</Text>
+              </View>
+              <View style={styles.operandContainer}>
+                <Animated.Text
+                  style={[
+                    styles.textOperand,
+                    {
+                      transform: [
+                        { translateY: translateY2 },
+                        { perspective: 1000 },
+                      ],
+                    },
+                    {
+                      opacity: opacity,
+                    },
+                  ]}
+                >
+                  {challenge.operand2}
+                </Animated.Text>
+              </View>
+            </View>
+          )}
+          {!totalChallenge && (
+            <View style={styles.lottieWrapper}>
+              <LottieView
+                autoPlay={true}
+                loop={false}
+                source={require('../../assets/animations/congratulations.json')}
+                style={styles.lottieContainer}
+              />
+              <ButtonWrapper>
+                <ButtonContainer text="результаты" onClick={showRes} />
+              </ButtonWrapper>
+            </View>
+          )}
+        </View>
+      )}
+      {totalChallenge > 0 && (
+        <View style={styles.resContainer}>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={onChangeInput}
+            value={input}
+            placeholder="Введите результат"
+            placeholderTextColor={'#fbd499'}
+            keyboardType="numeric"
+          />
+          <ButtonWrapper>
+            <CalcChallengeBtn text="Далее" onClick={onClick} />
+          </ButtonWrapper>
+        </View>
+      )}
+      {switchToRes && (
+        <MainChallengeRes
+          startTime={totalTime.startTime}
+          finishTime={totalTime.finishTime}
+          results={results.current}
+          correct={correct.current}
+          totalChallenge={ChallengeSettings.totalChallenge}
+        />
+      )}
+    </View>
   );
 }
 
@@ -291,7 +286,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingLeft: 10,
     paddingRight: 10,
-    color: 'white',
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
     fontSize: 32,
   },
   lottieWrapper: {
@@ -304,14 +301,14 @@ const styles = StyleSheet.create({
   },
   resContainer: {
     flex: 0.5,
-    // paddingBottom: 32,
     justifyContent: 'space-between',
   },
   textInput: {
-    fontFamily: 'Nunito-Regular',
     textAlign: 'center',
     borderRadius: 8,
     backgroundColor: '#252b43',
-    color: 'white',
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
   },
 });

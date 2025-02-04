@@ -29,7 +29,7 @@ export default function ProgressBar({ step, steps, height }: ProgressBar) {
       }}
       style={{
         height,
-        backgroundColor: '#252b43',
+        backgroundColor: '#879c7d',
         borderRadius: height,
         overflow: 'hidden',
       }}
@@ -39,7 +39,7 @@ export default function ProgressBar({ step, steps, height }: ProgressBar) {
           height,
           width: '100%',
           borderRadius: height,
-          backgroundColor: '#a65107',
+          backgroundColor: '#f6c25d',
           position: 'absolute',
           left: 0,
           top: 0,

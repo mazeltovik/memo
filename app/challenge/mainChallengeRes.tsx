@@ -1,0 +1,323 @@
+import { useState, useEffect, useMemo } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  useAnimatedValue,
+  Animated,
+  ScrollView,
+  useWindowDimensions,
+} from 'react-native';
+import LottieView from 'lottie-react-native';
+import formatDuration from '../scripts/formatDuration';
+import ButtonWrapper, { CalcChallengeBtn } from '../components/buttonWrapper';
+
+const localAssets = {
+  goldMedal: require('../../assets/animations/goldMedal.json'),
+  silverMedal: require('../../assets/animations/silverMedal.json'),
+  bronzeMedal: require('../../assets/animations/bronzeMedal.json'),
+  chill: require('../../assets/animations/chill.json'),
+};
+
+enum Evaluation {
+  gold = 120,
+  silver = 180,
+  bronze = 240,
+}
+
+// enum Evaluation {
+//   gold = 10,
+//   silver = 20,
+//   bronze = 30,
+// }
+
+type Result = {
+  operand1: number;
+  operand2: number;
+  operation: string;
+  res: string;
+};
+
+type ResProps = {
+  correct: number;
+  totalChallenge: number;
+  startTime: number;
+  finishTime: number;
+  results: Result[];
+};
+
+export default function MainChallengeRes({
+  correct,
+  totalChallenge,
+  startTime,
+  finishTime,
+  results,
+}: ResProps) {
+  const { width: windowWidth } = useWindowDimensions();
+  const correctOpacity = useAnimatedValue(0);
+  const correctTranslate = useAnimatedValue(-windowWidth);
+  const timeOpacity = useAnimatedValue(0);
+  const timeTranslate = useAnimatedValue(-windowWidth);
+  const fineOpacity = useAnimatedValue(0);
+  const fineTranslate = useAnimatedValue(-windowWidth);
+  const [showMedal, setShowMedal] = useState(false);
+  const { formatedTime, evaluation, fine } = useMemo(() => {
+    const formatedTime = formatDuration(startTime, finishTime);
+    const timeDiff = finishTime - startTime;
+    const uncorrect = totalChallenge - correct;
+    const fine = uncorrect > 0 ? 0.25 * uncorrect : 0;
+    const totalTime = timeDiff + fine;
+    const evaluation =
+      uncorrect == totalChallenge
+        ? ''
+        : totalTime <= Evaluation.gold
+        ? 'gold'
+        : totalTime > Evaluation.gold && totalTime <= Evaluation.silver
+        ? 'silver'
+        : totalTime > Evaluation.silver && totalTime <= Evaluation.bronze
+        ? 'bronze'
+        : '';
+    return { formatedTime, evaluation, fine };
+  }, []);
+  useEffect(() => {
+    Animated.sequence([
+      Animated.parallel([
+        Animated.timing(correctOpacity, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(correctTranslate, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.parallel([
+        Animated.timing(timeOpacity, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(timeTranslate, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.parallel([
+        Animated.timing(fineOpacity, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fineTranslate, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start(({ finished }) => {
+      if (finished) setShowMedal(true);
+    });
+  }, [correctOpacity, correctTranslate, timeOpacity, timeTranslate]);
+  const onClick = () => {};
+  return (
+    <View style={styles.resultWrapper}>
+      <View style={styles.resultContainer}>
+        <Animated.View
+          style={[
+            styles.info,
+            {
+              opacity: correctOpacity,
+            },
+            {
+              transform: [
+                {
+                  translateX: correctTranslate,
+                },
+              ],
+            },
+          ]}
+        >
+          <Text style={styles.infoText}>Верно:</Text>
+          <Text
+            style={styles.infoText}
+          >{`${correct} / ${totalChallenge}`}</Text>
+        </Animated.View>
+        <Animated.View
+          style={[
+            styles.info,
+            {
+              opacity: timeOpacity,
+            },
+            {
+              transform: [
+                {
+                  translateX: timeTranslate,
+                },
+              ],
+            },
+          ]}
+        >
+          <Text style={styles.infoText}>Время:</Text>
+          <Text style={styles.infoText}>{formatedTime}</Text>
+        </Animated.View>
+        <Animated.View
+          style={[
+            styles.info,
+            {
+              opacity: fineOpacity,
+            },
+            {
+              transform: [
+                {
+                  translateX: fineTranslate,
+                },
+              ],
+            },
+          ]}
+        >
+          <Text style={styles.infoText}>Штраф:</Text>
+          <Text style={styles.infoText}>{`+ ${fine} сек`}</Text>
+        </Animated.View>
+        {showMedal && (
+          <View style={styles.lottieWrapper}>
+            <LottieView
+              autoPlay={true}
+              loop={false}
+              source={
+                evaluation == 'gold'
+                  ? localAssets.goldMedal
+                  : evaluation == 'silver'
+                  ? localAssets.silverMedal
+                  : evaluation == 'bronze'
+                  ? localAssets.bronzeMedal
+                  : localAssets.chill
+              }
+              style={styles.lottieContainer}
+            />
+            <Text style={styles.evaluationText}>
+              {evaluation == 'gold'
+                ? 'Вычислительная машина'
+                : evaluation == 'silver'
+                ? 'Вычислительный эксперт'
+                : evaluation == 'bronze'
+                ? 'Мастер вычислений'
+                : 'Новичок'}
+            </Text>
+          </View>
+        )}
+      </View>
+      <ScrollView style={styles.testsContainer}>
+        {results.map((result, index) => {
+          const { operand1, operand2, operation, res } = result;
+          const resInput = Number(res);
+          let calcRes = 0;
+          let calc = true;
+          if (resInput || resInput == 0) {
+            if (operation == '+') {
+              calcRes = operand1 + operand2;
+              calc = calcRes == resInput ? true : false;
+            } else if (operation == '-') {
+              calcRes = operand1 - operand2;
+              calc = calcRes == resInput ? true : false;
+            } else if (operation == '*') {
+              calcRes = operand1 * operand2;
+              calc = calcRes == resInput ? true : false;
+            } else {
+              calcRes = operand1 / operand2;
+              calc = calcRes == resInput ? true : false;
+            }
+          } else {
+            calc = false;
+          }
+          return (
+            <View
+              key={index}
+              style={[
+                styles.resultElem,
+                {
+                  borderWidth: 5,
+                  borderColor: calc ? '#cbc385' : '#a52b36',
+                },
+              ]}
+            >
+              <Text
+                style={styles.resultText}
+              >{`${operand1} ${operation} ${operand2} = ${res}`}</Text>
+            </View>
+          );
+        })}
+      </ScrollView>
+      <ButtonWrapper>
+        <CalcChallengeBtn text="меню" onClick={onClick} />
+      </ButtonWrapper>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  resultWrapper: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  resultContainer: {
+    flex: 1,
+    marginTop: 16,
+    marginBottom: 16,
+    paddingBottom: 8,
+    backgroundColor: '#333a56',
+    borderRadius: 10,
+  },
+  info: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 8,
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    textTransform: 'capitalize',
+  },
+  infoText: {
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+  },
+  lottieWrapper: {
+    width: '100%',
+    gap: 16,
+  },
+  lottieContainer: {
+    width: 180,
+    height: 180,
+    alignSelf: 'center',
+  },
+  evaluationText: {
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    textAlign: 'center',
+  },
+  testsContainer: {
+    flex: 1,
+  },
+  resultElem: {
+    marginTop: 16,
+    marginBottom: 16,
+    width: '100%',
+    borderRadius: 10,
+    height: 50,
+    justifyContent: 'center',
+    backgroundColor: '#333a56',
+  },
+  resultText: {
+    paddingTop: 8,
+    paddingBottom: 8,
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    textAlign: 'center',
+    textTransform: 'capitalize',
+  },
+});

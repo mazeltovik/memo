@@ -110,7 +110,7 @@ export default function SwipeCard({
       </View>
       <Animated.View
         style={[
-          { ...styles.borderContainer, borderColor: '#335e25' },
+          { ...styles.borderContainer, borderColor: '#f6c25d' },
           {
             height: windowHeight * 0.5,
             opacity: yesOpacity,
@@ -119,7 +119,7 @@ export default function SwipeCard({
       />
       <Animated.View
         style={[
-          { ...styles.borderContainer, borderColor: '#8a560a' },
+          { ...styles.borderContainer, borderColor: '#a52b36' },
           {
             height: windowHeight * 0.5,
             opacity: nopeOpacity,
@@ -147,9 +147,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 25,
     textAlign: 'center',
-    color: 'white',
+    color: '#fbd499',
     textTransform: 'capitalize',
-    fontFamily: 'Nunito-Regular',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
   },
   borderContainer: {
     width: '100%',
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     fontSize: 15,
     textAlign: 'center',
-    color: '#335e25',
+    color: '#f6c25d',
     textTransform: 'capitalize',
     fontFamily: 'Nunito-Regular',
   },
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     fontSize: 15,
     textAlign: 'center',
-    color: '#8a560a',
+    color: '#a52b36',
     textTransform: 'capitalize',
     fontFamily: 'Nunito-Regular',
   },

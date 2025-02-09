@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import WordTile from '../components/wordTile';
-import ButtonWrapper, { WordListBtn } from './buttonWrapper';
+import ButtonWrapper, { ButtonContainer } from './buttonWrapper';
 
 const words = [
   'полдень',
@@ -31,6 +31,11 @@ function List({
   setShowSwipeList,
   setStopTime,
 }: wordListType) {
+  const onClick = () => {
+    setShowWordList(false);
+    setShowSwipeList(true);
+    setStopTime(true);
+  };
   return (
     <View style={styles.wrapper}>
       <ScrollView style={styles.scrollContainer}>
@@ -46,12 +51,7 @@ function List({
         })}
       </ScrollView>
       <ButtonWrapper>
-        <WordListBtn
-          text="вперед"
-          setShowWordList={setShowWordList}
-          setShowSwipeList={setShowSwipeList}
-          setStopTime={setStopTime}
-        />
+        <ButtonContainer text="вперед" onClick={onClick} />
       </ButtonWrapper>
     </View>
   );

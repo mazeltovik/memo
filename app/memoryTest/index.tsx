@@ -4,7 +4,7 @@ import { useWindowDimensions } from 'react-native';
 import Countdown from '../components/countDown';
 import WordsList from '../components/wordsList';
 import SwipeList from '../components/swipeList';
-import Intro from './memoryTestSlides/intro';
+import ButtonWrapper, { StartBtn } from '../components/buttonWrapper';
 import MemoryTestRes from './memoryTestRes';
 
 export default function MemoryTest() {
@@ -18,17 +18,22 @@ export default function MemoryTest() {
   const [finishedTranslate, setFinishedTranslate] = useState(false);
   const [approved, setApproved] = useState<string[]>([]);
   const [rejected, setRejected] = useState<string[]>([]);
+  const onStart = () => {
+    setShowIntro(!showIntro);
+    setShowWordList(!showWordList);
+  };
   return (
-    <View style={wordTestStyles.wrapper}>
-      <View style={wordTestStyles.container}>
+    <View style={styles.wrapper}>
+      <View style={styles.container}>
         {showIntro && (
-          <Intro
-            setShowIntro={setShowIntro}
-            setShowWordList={setShowWordList}
-          />
+          <View style={styles.btnContainer}>
+            <ButtonWrapper>
+              <StartBtn text="старт" onClick={onStart} />
+            </ButtonWrapper>
+          </View>
         )}
         {showWordList && (
-          <View style={wordTestStyles.wordListContainer}>
+          <View style={styles.wordListContainer}>
             <Countdown
               time={time}
               stopTime={stopTime}
@@ -65,13 +70,18 @@ export default function MemoryTest() {
   );
 }
 
-const wordTestStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: '#1d2029',
   },
   container: {
     flex: 1,
+  },
+  btnContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   wordListContainer: {
     flex: 1,

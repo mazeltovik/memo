@@ -8,16 +8,18 @@ import {
   ScrollView,
   useWindowDimensions,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
+import { localAnimations } from '../index';
 import formatDuration from '../scripts/formatDuration';
-import ButtonWrapper, { CalcChallengeBtn } from '../components/buttonWrapper';
+import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
 
-const localAssets = {
-  goldMedal: require('../../assets/animations/goldMedal.json'),
-  silverMedal: require('../../assets/animations/silverMedal.json'),
-  bronzeMedal: require('../../assets/animations/bronzeMedal.json'),
-  chill: require('../../assets/animations/chill.json'),
-};
+// const localAssets = {
+//   goldMedal: require('../../assets/animations/goldMedal.json'),
+//   silverMedal: require('../../assets/animations/silverMedal.json'),
+//   bronzeMedal: require('../../assets/animations/bronzeMedal.json'),
+//   chill: require('../../assets/animations/chill.json'),
+// };
 
 enum Evaluation {
   gold = 120,
@@ -54,6 +56,7 @@ export default function MainChallengeRes({
   results,
 }: ResProps) {
   const { width: windowWidth } = useWindowDimensions();
+  const router = useRouter();
   const correctOpacity = useAnimatedValue(0);
   const correctTranslate = useAnimatedValue(-windowWidth);
   const timeOpacity = useAnimatedValue(0);
@@ -121,7 +124,9 @@ export default function MainChallengeRes({
       if (finished) setShowMedal(true);
     });
   }, [correctOpacity, correctTranslate, timeOpacity, timeTranslate]);
-  const onClick = () => {};
+  const onClick = () => {
+    router.dismissAll();
+  };
   return (
     <View style={styles.resultWrapper}>
       <View style={styles.resultContainer}>
@@ -188,12 +193,12 @@ export default function MainChallengeRes({
               loop={false}
               source={
                 evaluation == 'gold'
-                  ? localAssets.goldMedal
+                  ? localAnimations.goldMedal
                   : evaluation == 'silver'
-                  ? localAssets.silverMedal
+                  ? localAnimations.silverMedal
                   : evaluation == 'bronze'
-                  ? localAssets.bronzeMedal
-                  : localAssets.chill
+                  ? localAnimations.bronzeMedal
+                  : localAnimations.chill
               }
               style={styles.lottieContainer}
             />
@@ -251,7 +256,7 @@ export default function MainChallengeRes({
         })}
       </ScrollView>
       <ButtonWrapper>
-        <CalcChallengeBtn text="меню" onClick={onClick} />
+        <ButtonContainer text="меню" onClick={onClick} />
       </ButtonWrapper>
     </View>
   );

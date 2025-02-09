@@ -1,28 +1,6 @@
 import { StyleSheet, Pressable, Animated, View } from 'react-native';
-import { PropsWithChildren, SetStateAction, useRef } from 'react';
+import { PropsWithChildren, useRef } from 'react';
 import useOnPressAnim from '../hooks/onPress';
-
-type IntroButtonProps = {
-  text: string;
-  setShowIntro: React.Dispatch<SetStateAction<boolean>>;
-  setShowWordList: React.Dispatch<SetStateAction<boolean>>;
-};
-
-type WordListBtnTypes = {
-  text: string;
-  setShowWordList: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowSwipeList: React.Dispatch<React.SetStateAction<boolean>>;
-  setStopTime: React.Dispatch<SetStateAction<boolean>>;
-};
-
-type SwipeBtn = {
-  text: string;
-};
-
-type CalcChallenge = {
-  text: string;
-  onClick: () => void;
-};
 
 type BtnContainer = {
   text: string;
@@ -60,38 +38,7 @@ export function ButtonContainer({ text, onClick }: BtnContainer) {
   );
 }
 
-export function CalcChallengeBtn({ text, onClick }: CalcChallenge) {
-  const { scales, onPress } = useOnPressAnim();
-  return (
-    <Animated.View
-      style={[
-        basicBtn.pressContainer,
-        {
-          transform: [
-            { scaleX: scales.x },
-            { scaleY: scales.y },
-            { perspective: 1000 },
-          ],
-        },
-      ]}
-    >
-      <Pressable
-        onPress={() => {
-          onPress();
-          onClick();
-        }}
-      >
-        <Animated.Text style={[basicBtn.pressText]}>{text}</Animated.Text>
-      </Pressable>
-    </Animated.View>
-  );
-}
-
-export function IntroButton({
-  text,
-  setShowIntro,
-  setShowWordList,
-}: IntroButtonProps) {
+export function StartBtn({ text, onClick }: BtnContainer) {
   const scales = useRef(new Animated.ValueXY({ x: 1, y: 1 })).current;
   const onPress = () => {
     Animated.sequence([
@@ -106,14 +53,13 @@ export function IntroButton({
         useNativeDriver: true,
       }),
     ]).start(() => {
-      setShowIntro(false);
-      setShowWordList(true);
+      onClick();
     });
   };
   return (
     <Animated.View
       style={[
-        wordTestBtnStyles.wrapper,
+        startBtnStyles.wrapper,
         {
           transform: [
             { scaleX: scales.x },
@@ -127,80 +73,18 @@ export function IntroButton({
         onPress={() => {
           onPress();
         }}
-        style={wordTestBtnStyles.pressContainer}
+        style={startBtnStyles.pressContainer}
       >
-        <Animated.Text style={[wordTestBtnStyles.pressText]}>
-          {text}
-        </Animated.Text>
+        <Animated.Text style={[startBtnStyles.pressText]}>{text}</Animated.Text>
       </Pressable>
     </Animated.View>
   );
 }
 
-export function WordListBtn({
-  text,
-  setShowSwipeList,
-  setShowWordList,
-  setStopTime,
-}: WordListBtnTypes) {
-  const { scales, onPress } = useOnPressAnim();
-  return (
-    <Animated.View
-      style={[
-        basicBtn.pressContainer,
-        {
-          transform: [
-            { scaleX: scales.x },
-            { scaleY: scales.y },
-            { perspective: 1000 },
-          ],
-        },
-      ]}
-    >
-      <Pressable
-        onPress={() => {
-          onPress();
-          setShowWordList(false);
-          setShowSwipeList(true);
-          setStopTime(true);
-        }}
-      >
-        <Animated.Text style={[basicBtn.pressText]}>{text}</Animated.Text>
-      </Pressable>
-    </Animated.View>
-  );
-}
-
-export function SwipeBtn({ text }: SwipeBtn) {
-  const { scales, onPress } = useOnPressAnim();
-  return (
-    <Animated.View
-      style={[
-        basicBtn.pressContainer,
-        {
-          transform: [
-            { scaleX: scales.x },
-            { scaleY: scales.y },
-            { perspective: 1000 },
-          ],
-        },
-      ]}
-    >
-      <Pressable
-        onPress={() => {
-          onPress();
-        }}
-      >
-        <Animated.Text style={[basicBtn.pressText]}>{text}</Animated.Text>
-      </Pressable>
-    </Animated.View>
-  );
-}
-
-const wordTestBtnStyles = StyleSheet.create({
+const startBtnStyles = StyleSheet.create({
   wrapper: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
   },
   pressContainer: {
     width: '100%',
@@ -210,9 +94,11 @@ const wordTestBtnStyles = StyleSheet.create({
     backgroundColor: '#252b43',
   },
   pressText: {
-    color: 'white',
-    fontFamily: 'Nunito-Regular',
     textAlign: 'center',
+    textTransform: 'capitalize',
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
   },
 });
 
@@ -229,8 +115,9 @@ const basicBtn = StyleSheet.create({
   pressText: {
     paddingTop: 8,
     paddingBottom: 8,
-    color: 'white',
-    fontFamily: 'Nunito-Regular',
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
     textAlign: 'center',
     textTransform: 'capitalize',
   },

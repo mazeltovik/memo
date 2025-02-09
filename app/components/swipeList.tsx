@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
 import SwipeCard from './swipeCard';
-import ButtonWrapper, { SwipeBtn } from './buttonWrapper';
+import ButtonWrapper, { ButtonContainer } from './buttonWrapper';
 import shuffle from '../scripts/shuffle';
 
 type SwipeListProps = {
@@ -95,7 +95,12 @@ export default function SwipeList({
       )}
       {words.length == 0 && (
         <ButtonWrapper>
-          <SwipeBtn text="вперед" />
+          <ButtonContainer
+            text="вперед"
+            onClick={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
         </ButtonWrapper>
       )}
     </View>

@@ -17,6 +17,13 @@ const localAssets = {
   statistic: require('../assets/images/chart-line.svg'),
 };
 
+export const localAnimations = {
+  goldMedal: require('../assets/animations/goldMedal.json'),
+  silverMedal: require('../assets/animations/silverMedal.json'),
+  bronzeMedal: require('../assets/animations/bronzeMedal.json'),
+  chill: require('../assets/animations/chill.json'),
+};
+
 export default function App() {
   return (
     <View style={styles.wrapper}>

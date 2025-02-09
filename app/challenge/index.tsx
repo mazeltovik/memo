@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import ButtonWrapper, {
-  CalcChallengeBtn,
   ButtonContainer,
+  StartBtn,
 } from '../components/buttonWrapper';
 import ProgressBar from '../components/progressBar';
 import MainChallengeRes from './mainChallengeRes';
@@ -42,6 +42,7 @@ export default function MainChallenge() {
   const translateY1 = useAnimatedValue(-55);
   const translateY2 = useAnimatedValue(-55);
   const opacity = useAnimatedValue(0);
+  const [start, setStart] = useState(false);
   const [step, setStep] = useState(0);
   const [totalChallenge, setTotalChallenge] = useState(
     ChallengeSettings.totalChallenge
@@ -158,12 +159,22 @@ export default function MainChallenge() {
       }
     }
   };
+  const onStart = () => {
+    setStart(true);
+  };
   const showRes = () => {
     setSwitchToRes(true);
   };
   return (
     <View style={styles.wrapper}>
-      {!switchToRes && (
+      {!start && (
+        <View style={styles.startContainer}>
+          <ButtonWrapper>
+            <StartBtn text="старт" onClick={onStart} />
+          </ButtonWrapper>
+        </View>
+      )}
+      {!switchToRes && start && (
         <View style={styles.challengeContainer}>
           <ProgressBar
             step={step}
@@ -228,7 +239,7 @@ export default function MainChallenge() {
           )}
         </View>
       )}
-      {totalChallenge > 0 && (
+      {start && totalChallenge > 0 && (
         <View style={styles.resContainer}>
           <TextInput
             style={styles.textInput}
@@ -239,7 +250,7 @@ export default function MainChallenge() {
             keyboardType="numeric"
           />
           <ButtonWrapper>
-            <CalcChallengeBtn text="Далее" onClick={onClick} />
+            <ButtonContainer text="Далее" onClick={onClick} />
           </ButtonWrapper>
         </View>
       )}
@@ -264,6 +275,11 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     justifyContent: 'space-between',
+  },
+  startContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   challengeContainer: {
     flex: 0.5,

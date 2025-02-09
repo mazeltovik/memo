@@ -3,24 +3,44 @@ import {
   Text,
   StyleSheet,
   View,
-  Pressable,
-  TextInput,
   Animated,
   useAnimatedValue,
 } from 'react-native';
 import { useWindowDimensions } from 'react-native';
+import LottieView from 'lottie-react-native';
+import { useRouter } from 'expo-router';
 import Clock from '../components/clock';
-import useOnPressAnim from '../hooks/onPress';
+import ButtonWrapper, {
+  ButtonContainer,
+  StartBtn,
+} from '../components/buttonWrapper';
 import formatDuration from '../scripts/formatDuration';
+import { localAnimations } from '../index';
+
+enum Evaluation {
+  gold = 60,
+  silver = 90,
+  bronze = 120,
+}
 
 export default function CountTest() {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
-  const { scales, onPress } = useOnPressAnim();
+  const router = useRouter();
+  const [start, setStart] = useState(false);
   const [finishedAnim, setFinishedAnim] = useState(false);
   const [stop, setStop] = useState(false);
   const [time, setTime] = useState(0);
   const timeOpacity = useAnimatedValue(0);
   const timeTranslate = useAnimatedValue(-windowWidth);
+  const onStart = () => {
+    setStart(true);
+  };
+  const onStop = () => {
+    setStop(!stop);
+  };
+  const handleDismissAll = () => {
+    router.dismissAll();
+  };
   useEffect(() => {
     const animated = Animated.parallel([
       Animated.timing(timeOpacity, {
@@ -39,105 +59,141 @@ export default function CountTest() {
     }
   }, [stop]);
   return (
-    <View style={countTestStyles.container}>
-      <Clock
-        windowWidth={windowWidth}
-        windowHeight={windowHeight}
-        finishedAnim={finishedAnim}
-        setFinishedAnim={setFinishedAnim}
-        stop={stop}
-        time={time}
-        setTime={setTime}
-      />
+    <View style={styles.wrapper}>
+      {!start && (
+        <View style={styles.startContainer}>
+          <ButtonWrapper>
+            <StartBtn text="старт" onClick={onStart} />
+          </ButtonWrapper>
+        </View>
+      )}
+      {start && (
+        <Clock
+          windowWidth={windowWidth}
+          windowHeight={windowHeight}
+          finishedAnim={finishedAnim}
+          setFinishedAnim={setFinishedAnim}
+          stop={stop}
+          time={time}
+          setTime={setTime}
+        />
+      )}
       {finishedAnim && !stop && (
-        <View>
-          <Pressable
-            onPress={() => {
-              onPress();
-              setStop(!stop);
-            }}
-            style={[countTestStyles.pressContainer]}
-          >
-            <Animated.Text
+        <ButtonWrapper>
+          <ButtonContainer text="стоп" onClick={onStop} />
+        </ButtonWrapper>
+      )}
+      {stop && (
+        <View style={styles.resContainer}>
+          <View style={styles.animatedContainer}>
+            <Animated.View
               style={[
-                countTestStyles.pressText,
+                styles.info,
                 {
-                  transform: [{ scaleX: scales.x }, { scaleY: scales.y }],
+                  opacity: timeOpacity,
+                },
+                {
+                  transform: [
+                    {
+                      translateX: timeTranslate,
+                    },
+                  ],
                 },
               ]}
             >
-              Стоп
-            </Animated.Text>
-          </Pressable>
-        </View>
-      )}
-      {stop && (
-        <View style={countTestStyles.resContainer}>
-          <Animated.View
-            style={[
-              countTestStyles.info,
-              {
-                opacity: timeOpacity,
-              },
-              {
-                transform: [
-                  {
-                    translateX: timeTranslate,
-                  },
-                ],
-              },
-            ]}
-          >
-            <Text style={countTestStyles.infoText}>Время:</Text>
-            <Text style={countTestStyles.infoText}>
-              {formatDuration(0, time)}
-            </Text>
-          </Animated.View>
+              <Text style={styles.infoText}>Время:</Text>
+              <Text style={styles.infoText}>{formatDuration(0, time)}</Text>
+            </Animated.View>
+            <View style={styles.lottieWrapper}>
+              <LottieView
+                autoPlay={true}
+                loop={false}
+                source={
+                  time <= Evaluation.gold
+                    ? localAnimations.goldMedal
+                    : time > Evaluation.gold && time <= Evaluation.silver
+                    ? localAnimations.silverMedal
+                    : time > Evaluation.silver && time <= Evaluation.bronze
+                    ? localAnimations.bronzeMedal
+                    : localAnimations.chill
+                }
+                style={styles.lottieContainer}
+              />
+              <Text style={styles.evaluationText}>
+                {time <= Evaluation.gold
+                  ? 'повелитель счета'
+                  : time > Evaluation.gold && time <= Evaluation.silver
+                  ? 'магистр счета'
+                  : time > Evaluation.silver && time <= Evaluation.bronze
+                  ? 'страж счета'
+                  : 'новичок'}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.routeBtn}>
+            <ButtonWrapper>
+              <ButtonContainer text="меню" onClick={handleDismissAll} />
+            </ButtonWrapper>
+          </View>
         </View>
       )}
     </View>
   );
 }
 
-const countTestStyles = StyleSheet.create({
-  container: {
+const styles = StyleSheet.create({
+  wrapper: {
     flex: 1,
     justifyContent: 'center',
     backgroundColor: '#1d2029',
   },
-  pressContainer: {
-    borderRadius: '10%',
-    height: 80,
-    justifyContent: 'center',
-    backgroundColor: '#1d2029',
-  },
-  pressText: {
-    fontFamily: 'Poiret-One',
-    fontWeight: 'regular',
-    paddingTop: 8,
-    paddingBottom: 8,
-    borderRadius: 8,
-    color: '#fbd499',
-    textAlign: 'center',
-    backgroundColor: '#252b43',
+  startContainer: {
+    alignSelf: 'center',
   },
   resContainer: {
-    flex: 0.5,
+    flex: 1,
+    backgroundColor: '#1d2029',
+    borderRadius: 10,
+    marginTop: 16,
+    marginBottom: 16,
+    gap: 32,
+  },
+  animatedContainer: {
+    flex: 2,
     backgroundColor: '#333a56',
     borderRadius: 10,
+    justifyContent: 'space-between',
+  },
+  lottieWrapper: {
+    width: '100%',
+    padding: 8,
+  },
+  lottieContainer: {
+    width: 180,
+    height: 180,
+    alignSelf: 'center',
+  },
+  evaluationText: {
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    textAlign: 'center',
+    textTransform: 'capitalize',
   },
   info: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 8,
-    color: '#fbd499',
-    fontFamily: 'Poiret-One',
-    fontWeight: 'regular',
-    textTransform: 'capitalize',
   },
   infoText: {
+    textTransform: 'capitalize',
     color: '#fbd499',
     fontFamily: 'Poiret-One',
     fontWeight: 'regular',
+  },
+  routeBtn: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'flex-end',
   },
 });

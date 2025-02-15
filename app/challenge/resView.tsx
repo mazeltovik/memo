@@ -48,7 +48,7 @@ type ResProps = {
   results: Result[];
 };
 
-export default function MainChallengeRes({
+export default function ResView({
   correct,
   totalChallenge,
   startTime,

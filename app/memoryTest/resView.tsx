@@ -1,27 +1,43 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Text,
-  ScrollView,
   StyleSheet,
   View,
   Animated,
   useAnimatedValue,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { useRouter } from 'expo-router';
+import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
 import useCountUp from '../hooks/useCountUp';
 
 type Props = {
   windowWidth: number;
+  totalLen: number;
+  score: { correct: number; percentage: number; fine: number };
+  waves: any;
 };
 
-export default function MemoryTestRes({ windowWidth }: Props) {
-  const { count: correctCount, countUp: countUpCorrect } = useCountUp(15);
-  const { count, countUp } = useCountUp(100, 4000);
+export default function ResView({
+  windowWidth,
+  totalLen,
+  waves,
+  score: { correct, percentage, fine },
+}: Props) {
+  const router = useRouter();
+  const { count: correctCount, countUp: countUpCorrect } = useCountUp(correct);
+  const { count: fineCount, countUp: countUpFine } = useCountUp(fine);
+  const { count, countUp } = useCountUp(percentage, 4000);
   const correctOpacity = useAnimatedValue(0);
   const correctTranslate = useAnimatedValue(-windowWidth);
-  const translateY = useAnimatedValue(300);
+  const fineOpacity = useAnimatedValue(0);
+  const fineTranslate = useAnimatedValue(-windowWidth);
+  const translateY = useAnimatedValue(200);
   const scalesAnim = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const [showResult, setShowResult] = useState(false);
+  const handleDismissAll = () => {
+    router.dismissAll();
+  };
   useEffect(() => {
     Animated.parallel([
       Animated.timing(correctOpacity, {
@@ -39,18 +55,36 @@ export default function MemoryTestRes({ windowWidth }: Props) {
         countUpCorrect();
       }
     });
+    Animated.parallel([
+      Animated.timing(fineOpacity, {
+        toValue: 1,
+        duration: 3000,
+        delay: 5000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fineTranslate, {
+        toValue: 0,
+        duration: 2000,
+        delay: 5000,
+        useNativeDriver: true,
+      }),
+    ]).start(({ finished }) => {
+      if (finished) {
+        countUpFine();
+      }
+    });
     Animated.timing(scalesAnim, {
       toValue: { x: 1, y: 1 },
       duration: 2000,
-      delay: 7000,
+      delay: 10000,
       useNativeDriver: true,
     }).start(() => {
       setShowResult(true);
       countUp();
     });
     Animated.timing(translateY, {
-      toValue: 0,
-      delay: 9000,
+      toValue: -40 + Math.round(200 * (fine / 100)),
+      delay: 11000,
       duration: 4000,
       useNativeDriver: true,
     }).start();
@@ -74,7 +108,25 @@ export default function MemoryTestRes({ windowWidth }: Props) {
           ]}
         >
           <Text style={styles.infoText}>Верно:</Text>
-          <Text style={styles.infoText}>{`${correctCount}/30`}</Text>
+          <Text style={styles.infoText}>{`${correctCount}/${totalLen}`}</Text>
+        </Animated.View>
+        <Animated.View
+          style={[
+            styles.info,
+            {
+              opacity: fineOpacity,
+            },
+            {
+              transform: [
+                {
+                  translateX: fineTranslate,
+                },
+              ],
+            },
+          ]}
+        >
+          <Text style={styles.infoText}>Штраф:</Text>
+          <Text style={styles.infoText}>{`- ${fineCount}%`}</Text>
         </Animated.View>
         <View style={styles.wavesWrapper}>
           <Text style={[styles.infoText, { textAlign: 'center' }]}>
@@ -101,7 +153,7 @@ export default function MemoryTestRes({ windowWidth }: Props) {
               <LottieView
                 autoPlay={true}
                 loop
-                source={require('../../assets/animations/waves.json')}
+                source={waves}
                 style={styles.lottieContainer}
               />
             </Animated.View>
@@ -113,6 +165,11 @@ export default function MemoryTestRes({ windowWidth }: Props) {
           )}
         </View>
       </View>
+      <View style={styles.btnContainer}>
+        <ButtonWrapper>
+          <ButtonContainer text="меню" onClick={handleDismissAll} />
+        </ButtonWrapper>
+      </View>
     </View>
   );
 }
@@ -120,9 +177,11 @@ export default function MemoryTestRes({ windowWidth }: Props) {
 const styles = StyleSheet.create({
   resContainer: {
     flex: 1,
+    paddingTop: 16,
+    paddingBottom: 16,
   },
   animationContainer: {
-    flex: 3,
+    flex: 2,
     backgroundColor: '#333a56',
     gap: 32,
     borderRadius: 10,
@@ -148,23 +207,27 @@ const styles = StyleSheet.create({
   wavesContainer: {
     width: 200,
     height: 200,
-    // position: 'relative',
+    position: 'relative',
     borderRadius: '50%',
     overflow: 'hidden',
     alignSelf: 'center',
-    // alignItems: 'center',
+    alignItems: 'center',
     backgroundColor: 'white',
     borderColor: '#fbd499',
     borderWidth: 5,
   },
   lottieContainer: {
     position: 'absolute',
-    width: 195,
-    height: 195,
+    width: 230,
+    height: 230,
     transform: [
       {
         scaleX: 1.5,
       },
     ],
+  },
+  btnContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
   },
 });

@@ -1,32 +1,18 @@
 import { memo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import WordTile from '../components/wordTile';
-import ButtonWrapper, { ButtonContainer } from './buttonWrapper';
-
-const words = [
-  'полдень',
-  'секция',
-  'тюбик',
-  'медведь',
-  'рюкзак',
-  'сироп',
-  'цвет',
-  'ремень',
-  'брат',
-  'бумага',
-  'разум',
-  'точка',
-  'офис',
-];
+import MemoryWord from './memoryWord';
+import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
 
 type wordListType = {
   windowWidth: number;
+  initialWords: string[];
   setShowWordList: React.Dispatch<React.SetStateAction<boolean>>;
   setShowSwipeList: React.Dispatch<React.SetStateAction<boolean>>;
   setStopTime: React.Dispatch<React.SetStateAction<boolean>>;
 };
 function List({
   windowWidth,
+  initialWords,
   setShowWordList,
   setShowSwipeList,
   setStopTime,
@@ -39,9 +25,9 @@ function List({
   return (
     <View style={styles.wrapper}>
       <ScrollView style={styles.scrollContainer}>
-        {words.map((word, index) => {
+        {initialWords.map((word, index) => {
           return (
-            <WordTile
+            <MemoryWord
               word={word}
               windowWidth={windowWidth}
               duration={index++}
@@ -67,5 +53,5 @@ const styles = StyleSheet.create({
   },
 });
 
-const WordsList = memo(List);
-export default WordsList;
+const MemoryList = memo(List);
+export default MemoryList;

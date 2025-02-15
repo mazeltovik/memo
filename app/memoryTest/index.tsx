@@ -1,23 +1,67 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 import Countdown from '../components/countDown';
-import WordsList from '../components/wordsList';
-import SwipeList from '../components/swipeList';
+import MemoryList from './memoryList';
+import SwipeView from './swipeView';
 import ButtonWrapper, { StartBtn } from '../components/buttonWrapper';
-import MemoryTestRes from './memoryTestRes';
+import ResView from './resView';
+import shuffle from '../scripts/shuffle';
+
+const localAnimations = {
+  waves: require('../../assets/animations/waves.json'),
+};
 
 export default function MemoryTest() {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const [showIntro, setShowIntro] = useState(true);
   const [showWordList, setShowWordList] = useState(false);
-  const [showSwipeList, setShowSwipeList] = useState(false);
+  const [showSwipeView, setShowSwipeView] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [time, setTime] = useState(50);
   const [stopTime, setStopTime] = useState(false);
   const [finishedTranslate, setFinishedTranslate] = useState(false);
-  const [approved, setApproved] = useState<string[]>([]);
-  const [rejected, setRejected] = useState<string[]>([]);
+  const [words, setWords] = useState<string[]>([]);
+  const [approvedWords, setApprovedWords] = useState<string[]>([]);
+  const [score, setScore] = useState({ correct: 0, percentage: 0, fine: 0 });
+  const { initialWords, shuffleInitialWords } = useMemo(() => {
+    const initialWords = [
+      'полдень',
+      'секция',
+      'тюбик',
+      'медведь',
+      'рюкзак',
+      'сироп',
+      'цвет',
+      'ремень',
+      'брат',
+      'бумага',
+      'разум',
+      'точка',
+      'офис',
+    ];
+    const wrongWords = [
+      'рис',
+      'поэма',
+      'пример',
+      'воздух',
+      'доска',
+      'право',
+      'ценность',
+      'плавание',
+      'сторона',
+      'танец',
+      'лодка',
+    ];
+    const shuffleInitialWords = shuffle(initialWords).slice(0, 7);
+    const shuffleWrongWords = shuffle(wrongWords).slice(0, 3);
+    const totalRes = shuffle([...shuffleInitialWords, ...shuffleWrongWords]);
+    console.log(shuffleInitialWords);
+    console.log(shuffleWrongWords);
+    setWords(totalRes);
+    return { initialWords, shuffleInitialWords };
+  }, []);
+
   const onStart = () => {
     setShowIntro(!showIntro);
     setShowWordList(!showWordList);
@@ -43,28 +87,41 @@ export default function MemoryTest() {
               finishedTranslate={finishedTranslate}
               setFinishedTranslate={setFinishedTranslate}
               setShowWordList={setShowWordList}
-              setShowSwipeList={setShowSwipeList}
+              setShowSwipeList={setShowSwipeView}
             />
             {finishedTranslate && (
-              <WordsList
+              <MemoryList
                 windowWidth={windowWidth}
+                initialWords={initialWords}
                 setShowWordList={setShowWordList}
-                setShowSwipeList={setShowSwipeList}
+                setShowSwipeList={setShowSwipeView}
                 setStopTime={setStopTime}
               />
             )}
           </View>
         )}
-        {showSwipeList && (
-          <SwipeList
+        {showSwipeView && (
+          <SwipeView
             windowHeight={windowHeight}
-            approved={approved}
-            setApproved={setApproved}
-            rejected={rejected}
-            setRejected={setRejected}
+            words={words}
+            activeWord={words[0]}
+            shuffleInitialWords={shuffleInitialWords}
+            approvedWords={approvedWords}
+            setWords={setWords}
+            setShowResult={setShowResult}
+            setShowSwipeView={setShowSwipeView}
+            setApprovedWords={setApprovedWords}
+            setScore={setScore}
           />
         )}
-        {showResult && <MemoryTestRes windowWidth={windowWidth} />}
+        {showResult && (
+          <ResView
+            windowWidth={windowWidth}
+            score={score}
+            waves={localAnimations.waves}
+            totalLen={shuffleInitialWords.length}
+          />
+        )}
       </View>
     </View>
   );

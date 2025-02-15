@@ -8,7 +8,7 @@ type wordTileTypes = {
   duration: number;
 };
 
-export default function WordTile({
+export default function MemoryWord({
   word,
   windowWidth,
   duration,

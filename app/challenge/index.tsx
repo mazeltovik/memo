@@ -13,15 +13,15 @@ import ButtonWrapper, {
   StartBtn,
 } from '../components/buttonWrapper';
 import ProgressBar from '../components/progressBar';
-import MainChallengeRes from './mainChallengeRes';
+import ResView from './resView';
 import getRandomInt, { getRandomEvenInt } from '../scripts/getRandomInt';
 
 enum ChallengeSettings {
-  totalChallenge = 10,
-  plusChallenge = 3,
-  minusChallenge = 3,
-  multiplyChallenge = 3,
-  divideChallenge = 1,
+  totalChallenge = 20,
+  plusChallenge = 5,
+  minusChallenge = 5,
+  multiplyChallenge = 5,
+  divideChallenge = 5,
 }
 
 type Operations = '_' | '+' | '-' | '*' | '/';
@@ -255,7 +255,7 @@ export default function MainChallenge() {
         </View>
       )}
       {switchToRes && (
-        <MainChallengeRes
+        <ResView
           startTime={totalTime.startTime}
           finishTime={totalTime.finishTime}
           results={results.current}

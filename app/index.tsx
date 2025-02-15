@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 import MenuItem from './components/menuItem';
 // import Carousel from './components/carousel';
@@ -9,6 +15,7 @@ import MenuItem from './components/menuItem';
 //////////////////////////////////////
 // import CountTest from './training/countTest';
 // import MemoryTest from './memoryTest';
+
 const localAssets = {
   exercise: require('../assets/images/brain.svg'),
   training: require('../assets/images/tests.svg'),

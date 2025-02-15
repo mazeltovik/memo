@@ -1,4 +1,4 @@
-import { StyleSheet, Text, Pressable, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MainModalProps } from '../modalView';
 import ButtonWrapper, { ButtonContainer } from '../buttonWrapper';

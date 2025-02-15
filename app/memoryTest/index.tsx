@@ -1,11 +1,13 @@
-import { useState, useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useState, useMemo, useEffect } from 'react';
+import { StyleSheet, View, BackHandler } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 import Countdown from '../components/countDown';
 import MemoryList from './memoryList';
 import SwipeView from './swipeView';
 import ButtonWrapper, { StartBtn } from '../components/buttonWrapper';
 import ResView from './resView';
+import MainModal from '../components/modalView';
+import BackHandlerModal from '../components/modals/backHandlerModal';
 import shuffle from '../scripts/shuffle';
 
 const localAnimations = {
@@ -24,6 +26,20 @@ export default function MemoryTest() {
   const [words, setWords] = useState<string[]>([]);
   const [approvedWords, setApprovedWords] = useState<string[]>([]);
   const [score, setScore] = useState({ correct: 0, percentage: 0, fine: 0 });
+  const [modalVisible, setModalVisible] = useState(false);
+  useEffect(() => {
+    const backAction = () => {
+      setModalVisible(true);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
   const { initialWords, shuffleInitialWords } = useMemo(() => {
     const initialWords = [
       'полдень',
@@ -68,6 +84,12 @@ export default function MemoryTest() {
   };
   return (
     <View style={styles.wrapper}>
+      <MainModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
+        <BackHandlerModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        />
+      </MainModal>
       <View style={styles.container}>
         {showIntro && (
           <View style={styles.btnContainer}>

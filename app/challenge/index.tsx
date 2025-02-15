@@ -6,6 +6,7 @@ import {
   TextInput,
   useAnimatedValue,
   Animated,
+  BackHandler,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import ButtonWrapper, {
@@ -14,6 +15,8 @@ import ButtonWrapper, {
 } from '../components/buttonWrapper';
 import ProgressBar from '../components/progressBar';
 import ResView from './resView';
+import MainModal from '../components/modalView';
+import BackHandlerModal from '../components/modals/backHandlerModal';
 import getRandomInt, { getRandomEvenInt } from '../scripts/getRandomInt';
 
 enum ChallengeSettings {
@@ -42,6 +45,7 @@ export default function MainChallenge() {
   const translateY1 = useAnimatedValue(-55);
   const translateY2 = useAnimatedValue(-55);
   const opacity = useAnimatedValue(0);
+  const [modalVisible, setModalVisible] = useState(false);
   const [start, setStart] = useState(false);
   const [step, setStep] = useState(0);
   const [totalChallenge, setTotalChallenge] = useState(
@@ -84,6 +88,19 @@ export default function MainChallenge() {
       useNativeDriver: true,
     }),
   ]);
+  useEffect(() => {
+    const backAction = () => {
+      setModalVisible(true);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
   useEffect(() => {
     totalTime.startTime = Math.floor(Date.now() / 1000);
   }, []);
@@ -167,6 +184,12 @@ export default function MainChallenge() {
   };
   return (
     <View style={styles.wrapper}>
+      <MainModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
+        <BackHandlerModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        />
+      </MainModal>
       {!start && (
         <View style={styles.startContainer}>
           <ButtonWrapper>

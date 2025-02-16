@@ -36,6 +36,7 @@ export default function CountTest() {
   const [modalVisible, setModalVisible] = useState(false);
   const timeOpacity = useAnimatedValue(0);
   const timeTranslate = useAnimatedValue(-windowWidth);
+  const [showMedal, setShowMedal] = useState(false);
   const onStart = () => {
     setStart(true);
   };
@@ -72,7 +73,11 @@ export default function CountTest() {
       }),
     ]);
     if (stop) {
-      animated.start();
+      animated.start(({ finished }) => {
+        if (finished) {
+          setShowMedal(true);
+        }
+      });
     }
   }, [stop]);
   return (
@@ -127,31 +132,33 @@ export default function CountTest() {
               <Text style={styles.infoText}>Время:</Text>
               <Text style={styles.infoText}>{formatDuration(0, time)}</Text>
             </Animated.View>
-            <View style={styles.lottieWrapper}>
-              <LottieView
-                autoPlay={true}
-                loop={false}
-                source={
-                  time <= Evaluation.gold
-                    ? localAnimations.goldMedal
+            {showMedal && (
+              <View style={styles.lottieWrapper}>
+                <LottieView
+                  autoPlay={true}
+                  loop={false}
+                  source={
+                    time <= Evaluation.gold
+                      ? localAnimations.goldMedal
+                      : time > Evaluation.gold && time <= Evaluation.silver
+                      ? localAnimations.silverMedal
+                      : time > Evaluation.silver && time <= Evaluation.bronze
+                      ? localAnimations.bronzeMedal
+                      : localAnimations.chill
+                  }
+                  style={styles.lottieContainer}
+                />
+                <Text style={styles.evaluationText}>
+                  {time <= Evaluation.gold
+                    ? 'повелитель счета'
                     : time > Evaluation.gold && time <= Evaluation.silver
-                    ? localAnimations.silverMedal
+                    ? 'магистр счета'
                     : time > Evaluation.silver && time <= Evaluation.bronze
-                    ? localAnimations.bronzeMedal
-                    : localAnimations.chill
-                }
-                style={styles.lottieContainer}
-              />
-              <Text style={styles.evaluationText}>
-                {time <= Evaluation.gold
-                  ? 'повелитель счета'
-                  : time > Evaluation.gold && time <= Evaluation.silver
-                  ? 'магистр счета'
-                  : time > Evaluation.silver && time <= Evaluation.bronze
-                  ? 'страж счета'
-                  : 'новичок'}
-              </Text>
-            </View>
+                    ? 'страж счета'
+                    : 'новичок'}
+                </Text>
+              </View>
+            )}
           </View>
           <View style={styles.routeBtn}>
             <ButtonWrapper>

@@ -5,18 +5,28 @@ import useOnPressAnim from '../hooks/onPress';
 type BtnContainer = {
   text: string;
   onClick: () => void;
+  backgroundColor?: string;
+  color?: string;
 };
 
 export default function ButtonWrapper({ children }: PropsWithChildren) {
   return <View>{children}</View>;
 }
 
-export function ButtonContainer({ text, onClick }: BtnContainer) {
+export function ButtonContainer({
+  text,
+  onClick,
+  backgroundColor,
+  color,
+}: BtnContainer) {
   const { scales, onPress } = useOnPressAnim();
   return (
     <Animated.View
       style={[
         basicBtn.pressContainer,
+        {
+          backgroundColor: backgroundColor ? backgroundColor : '#333a56',
+        },
         {
           transform: [
             { scaleX: scales.x },
@@ -32,7 +42,11 @@ export function ButtonContainer({ text, onClick }: BtnContainer) {
           onClick();
         }}
       >
-        <Animated.Text style={[basicBtn.pressText]}>{text}</Animated.Text>
+        <Animated.Text
+          style={[basicBtn.pressText, { color: color ? color : '#fbd499' }]}
+        >
+          {text}
+        </Animated.Text>
       </Pressable>
     </Animated.View>
   );
@@ -110,12 +124,10 @@ const basicBtn = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     justifyContent: 'center',
-    backgroundColor: '#333a56',
   },
   pressText: {
     paddingTop: 8,
     paddingBottom: 8,
-    color: '#fbd499',
     fontFamily: 'Poiret-One',
     fontWeight: 'regular',
     textAlign: 'center',

@@ -5,10 +5,13 @@ import {
   View,
   Animated,
   useAnimatedValue,
+  BackHandler,
 } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { useRouter } from 'expo-router';
+import MainModal from '../components/modalView';
+import BackHandlerModal from '../components/modals/backHandlerModal';
 import Clock from '../components/clock';
 import ButtonWrapper, {
   ButtonContainer,
@@ -30,6 +33,7 @@ export default function CountTest() {
   const [finishedAnim, setFinishedAnim] = useState(false);
   const [stop, setStop] = useState(false);
   const [time, setTime] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
   const timeOpacity = useAnimatedValue(0);
   const timeTranslate = useAnimatedValue(-windowWidth);
   const onStart = () => {
@@ -41,6 +45,19 @@ export default function CountTest() {
   const handleDismissAll = () => {
     router.dismissAll();
   };
+  useEffect(() => {
+    const backAction = () => {
+      setModalVisible(true);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
   useEffect(() => {
     const animated = Animated.parallel([
       Animated.timing(timeOpacity, {
@@ -60,6 +77,12 @@ export default function CountTest() {
   }, [stop]);
   return (
     <View style={styles.wrapper}>
+      <MainModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
+        <BackHandlerModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        />
+      </MainModal>
       {!start && (
         <View style={styles.startContainer}>
           <ButtonWrapper>

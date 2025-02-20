@@ -295,8 +295,8 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 32,
     backgroundColor: '#1d2029',
-    paddingLeft: 16,
-    paddingRight: 16,
+    // paddingLeft: 16,
+    // paddingRight: 16,
     justifyContent: 'space-between',
   },
   startContainer: {

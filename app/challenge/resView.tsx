@@ -14,13 +14,6 @@ import { localAnimations } from '../index';
 import formatDuration from '../scripts/formatDuration';
 import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
 
-// const localAssets = {
-//   goldMedal: require('../../assets/animations/goldMedal.json'),
-//   silverMedal: require('../../assets/animations/silverMedal.json'),
-//   bronzeMedal: require('../../assets/animations/bronzeMedal.json'),
-//   chill: require('../../assets/animations/chill.json'),
-// };
-
 enum Evaluation {
   gold = 120,
   silver = 180,
@@ -123,141 +116,168 @@ export default function ResView({
     ]).start(({ finished }) => {
       if (finished) setShowMedal(true);
     });
-  }, [correctOpacity, correctTranslate, timeOpacity, timeTranslate]);
+  }, [
+    correctOpacity,
+    correctTranslate,
+    timeOpacity,
+    timeTranslate,
+    fineOpacity,
+    fineTranslate,
+  ]);
   const onClick = () => {
     router.dismissAll();
   };
   return (
     <View style={styles.resultWrapper}>
       <View style={styles.resultContainer}>
-        <Animated.View
-          style={[
-            styles.info,
-            {
-              opacity: correctOpacity,
-            },
-            {
-              transform: [
-                {
-                  translateX: correctTranslate,
-                },
-              ],
-            },
-          ]}
-        >
-          <Text style={styles.infoText}>Верно:</Text>
-          <Text
-            style={styles.infoText}
-          >{`${correct} / ${totalChallenge}`}</Text>
-        </Animated.View>
-        <Animated.View
-          style={[
-            styles.info,
-            {
-              opacity: timeOpacity,
-            },
-            {
-              transform: [
-                {
-                  translateX: timeTranslate,
-                },
-              ],
-            },
-          ]}
-        >
-          <Text style={styles.infoText}>Время:</Text>
-          <Text style={styles.infoText}>{formatedTime}</Text>
-        </Animated.View>
-        <Animated.View
-          style={[
-            styles.info,
-            {
-              opacity: fineOpacity,
-            },
-            {
-              transform: [
-                {
-                  translateX: fineTranslate,
-                },
-              ],
-            },
-          ]}
-        >
-          <Text style={styles.infoText}>Штраф:</Text>
-          <Text style={styles.infoText}>{`+ ${fine} сек`}</Text>
-        </Animated.View>
-        {showMedal && (
-          <View style={styles.lottieWrapper}>
-            <LottieView
-              autoPlay={true}
-              loop={false}
-              source={
-                evaluation == 'gold'
-                  ? localAnimations.goldMedal
-                  : evaluation == 'silver'
-                  ? localAnimations.silverMedal
-                  : evaluation == 'bronze'
-                  ? localAnimations.bronzeMedal
-                  : localAnimations.chill
-              }
-              style={styles.lottieContainer}
-            />
-            <Text style={styles.evaluationText}>
-              {evaluation == 'gold'
-                ? 'Вычислительная машина'
-                : evaluation == 'silver'
-                ? 'Вычислительный эксперт'
-                : evaluation == 'bronze'
-                ? 'Мастер вычислений'
-                : 'Новичок'}
-            </Text>
+        <View style={styles.score}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleHeader}>оценка</Text>
+            <View style={styles.titleUnderline}></View>
           </View>
-        )}
-      </View>
-      <ScrollView style={styles.testsContainer}>
-        {results.map((result, index) => {
-          const { operand1, operand2, operation, res } = result;
-          const resInput = Number(res);
-          let calcRes = 0;
-          let calc = true;
-          if (resInput || resInput == 0) {
-            if (operation == '+') {
-              calcRes = operand1 + operand2;
-              calc = calcRes == resInput ? true : false;
-            } else if (operation == '-') {
-              calcRes = operand1 - operand2;
-              calc = calcRes == resInput ? true : false;
-            } else if (operation == '*') {
-              calcRes = operand1 * operand2;
-              calc = calcRes == resInput ? true : false;
-            } else {
-              calcRes = operand1 / operand2;
-              calc = calcRes == resInput ? true : false;
-            }
-          } else {
-            calc = false;
-          }
-          return (
-            <View
-              key={index}
-              style={[
-                styles.resultElem,
-                {
-                  borderWidth: 5,
-                  borderColor: calc ? '#cbc385' : '#a52b36',
-                },
-              ]}
-            >
-              <Text
-                style={styles.resultText}
-              >{`${operand1} ${operation} ${operand2} = ${res}`}</Text>
+          <Animated.View
+            style={[
+              styles.info,
+              {
+                opacity: correctOpacity,
+              },
+              {
+                transform: [
+                  {
+                    translateX: correctTranslate,
+                  },
+                ],
+              },
+            ]}
+          >
+            <Text style={styles.infoText}>Верно:</Text>
+            <Text
+              style={styles.infoText}
+            >{`${correct} / ${totalChallenge}`}</Text>
+          </Animated.View>
+          <Animated.View
+            style={[
+              styles.info,
+              {
+                opacity: timeOpacity,
+              },
+              {
+                transform: [
+                  {
+                    translateX: timeTranslate,
+                  },
+                ],
+              },
+            ]}
+          >
+            <Text style={styles.infoText}>Время:</Text>
+            <Text style={styles.infoText}>{formatedTime}</Text>
+          </Animated.View>
+          <Animated.View
+            style={[
+              styles.info,
+              {
+                opacity: fineOpacity,
+              },
+              {
+                transform: [
+                  {
+                    translateX: fineTranslate,
+                  },
+                ],
+              },
+            ]}
+          >
+            <Text style={styles.infoText}>Штраф:</Text>
+            <Text style={styles.infoText}>{`+ ${fine} сек`}</Text>
+          </Animated.View>
+          {showMedal && (
+            <View style={styles.lottieWrapper}>
+              <LottieView
+                autoPlay={true}
+                loop={false}
+                source={
+                  evaluation == 'gold'
+                    ? localAnimations.goldMedal
+                    : evaluation == 'silver'
+                    ? localAnimations.silverMedal
+                    : evaluation == 'bronze'
+                    ? localAnimations.bronzeMedal
+                    : localAnimations.chill
+                }
+                style={styles.lottieContainer}
+              />
+              <Text style={styles.evaluationText}>
+                {evaluation == 'gold'
+                  ? 'Вычислительная машина'
+                  : evaluation == 'silver'
+                  ? 'Вычислительный эксперт'
+                  : evaluation == 'bronze'
+                  ? 'Мастер вычислений'
+                  : 'Новичок'}
+              </Text>
             </View>
-          );
-        })}
-      </ScrollView>
-      <ButtonWrapper>
-        <ButtonContainer text="меню" onClick={onClick} />
-      </ButtonWrapper>
+          )}
+        </View>
+        <View style={styles.testWrapper}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleHeader}>тесты</Text>
+            <View style={styles.titleUnderline}></View>
+          </View>
+          <ScrollView
+            scrollEnabled={true}
+            indicatorStyle="white"
+            showsVerticalScrollIndicator={true}
+            persistentScrollbar={true}
+            style={styles.testsContainer}
+          >
+            {results.map((result, index) => {
+              const { operand1, operand2, operation, res } = result;
+              const resInput = Number(res);
+              let calcRes = 0;
+              let calc = true;
+              if (resInput || resInput == 0) {
+                if (operation == '+') {
+                  calcRes = operand1 + operand2;
+                  calc = calcRes == resInput ? true : false;
+                } else if (operation == '-') {
+                  calcRes = operand1 - operand2;
+                  calc = calcRes == resInput ? true : false;
+                } else if (operation == '*') {
+                  calcRes = operand1 * operand2;
+                  calc = calcRes == resInput ? true : false;
+                } else {
+                  calcRes = operand1 / operand2;
+                  calc = calcRes == resInput ? true : false;
+                }
+              } else {
+                calc = false;
+              }
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.resultElem,
+                    {
+                      borderWidth: 3,
+                      borderColor: calc ? '#cbc385' : '#a52b36',
+                    },
+                  ]}
+                >
+                  <Text
+                    style={styles.resultText}
+                  >{`${operand1} ${operation} ${operand2} = ${res}`}</Text>
+                </View>
+              );
+            })}
+          </ScrollView>
+        </View>
+      </View>
+      <View style={styles.btnContainer}>
+        <ButtonWrapper>
+          <ButtonContainer text="меню" onClick={onClick} />
+        </ButtonWrapper>
+      </View>
     </View>
   );
 }
@@ -265,15 +285,32 @@ export default function ResView({
 const styles = StyleSheet.create({
   resultWrapper: {
     flex: 1,
-    justifyContent: 'space-between',
+    paddingTop: 8,
   },
   resultContainer: {
+    height: '90%',
     flex: 1,
-    marginTop: 16,
-    marginBottom: 16,
-    paddingBottom: 8,
     backgroundColor: '#333a56',
     borderRadius: 10,
+    gap: 32,
+  },
+  score: {
+    flex: 1,
+  },
+  titleContainer: {
+    padding: 8,
+  },
+  titleHeader: {
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    textTransform: 'capitalize',
+    fontSize: 20,
+  },
+  titleUnderline: {
+    borderColor: '#fbd499',
+    borderBottomColor: '#fbd499',
+    borderBottomWidth: 2,
   },
   info: {
     flexDirection: 'row',
@@ -289,9 +326,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Poiret-One',
     fontWeight: 'regular',
   },
+  testWrapper: {
+    flex: 1,
+  },
   lottieWrapper: {
     width: '100%',
-    gap: 16,
+    gap: 8,
   },
   lottieContainer: {
     width: 180,
@@ -305,7 +345,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   testsContainer: {
-    flex: 1,
+    paddingHorizontal: 8,
   },
   resultElem: {
     marginTop: 16,
@@ -324,5 +364,8 @@ const styles = StyleSheet.create({
     fontWeight: 'regular',
     textAlign: 'center',
     textTransform: 'capitalize',
+  },
+  btnContainer: {
+    justifyContent: 'flex-end',
   },
 });

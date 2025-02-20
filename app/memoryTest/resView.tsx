@@ -267,8 +267,7 @@ export default function ResView({
 const styles = StyleSheet.create({
   resContainer: {
     flex: 1,
-    // paddingTop: 16,
-    // paddingBottom: 16,
+    paddingTop: 8,
   },
   animationContainer: {
     flex: 1,

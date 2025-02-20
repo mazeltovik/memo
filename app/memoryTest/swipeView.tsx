@@ -189,7 +189,7 @@ export default function SwipeView({
       )}
       {words.length == 0 && (
         <ButtonWrapper>
-          <ButtonContainer text="вперед" onClick={onClick} />
+          <ButtonContainer text="результаты" onClick={onClick} />
         </ButtonWrapper>
       )}
     </View>

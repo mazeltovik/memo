@@ -28,6 +28,7 @@ export default function ProgressBar({ step, steps, height }: ProgressBar) {
         setWidth(newWidth);
       }}
       style={{
+        marginTop: 8,
         height,
         backgroundColor: '#879c7d',
         borderRadius: height,

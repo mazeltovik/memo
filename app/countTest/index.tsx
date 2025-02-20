@@ -114,6 +114,10 @@ export default function CountTest() {
       {stop && (
         <View style={styles.resContainer}>
           <View style={styles.animatedContainer}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.titleHeader}>оценка</Text>
+              <View style={styles.titleUnderline}></View>
+            </View>
             <Animated.View
               style={[
                 styles.info,
@@ -188,11 +192,25 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     gap: 32,
   },
+  titleContainer: {
+    padding: 8,
+  },
+  titleHeader: {
+    color: '#fbd499',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    textTransform: 'capitalize',
+    fontSize: 20,
+  },
+  titleUnderline: {
+    borderColor: '#fbd499',
+    borderBottomColor: '#fbd499',
+    borderBottomWidth: 2,
+  },
   animatedContainer: {
     flex: 2,
     backgroundColor: '#333a56',
     borderRadius: 10,
-    justifyContent: 'space-between',
   },
   lottieWrapper: {
     width: '100%',
@@ -222,8 +240,6 @@ const styles = StyleSheet.create({
     fontWeight: 'regular',
   },
   routeBtn: {
-    flex: 1,
-    width: '100%',
     justifyContent: 'flex-end',
   },
 });

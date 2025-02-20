@@ -25,7 +25,7 @@ export default function MemoryTest() {
   const [finishedTranslate, setFinishedTranslate] = useState(false);
   const [words, setWords] = useState<string[]>([]);
   const [approvedWords, setApprovedWords] = useState<string[]>([]);
-  const [score, setScore] = useState({ correct: 0, percentage: 0, fine: 0 });
+  const [score, setScore] = useState({ correct: 0, percentage: 0 });
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
     const backAction = () => {
@@ -40,43 +40,44 @@ export default function MemoryTest() {
 
     return () => backHandler.remove();
   }, []);
-  const { initialWords, shuffleInitialWords } = useMemo(() => {
-    const initialWords = [
-      'полдень',
-      'секция',
-      'тюбик',
-      'медведь',
-      'рюкзак',
-      'сироп',
-      'цвет',
-      'ремень',
-      'брат',
-      'бумага',
-      'разум',
-      'точка',
-      'офис',
-    ];
-    const wrongWords = [
-      'рис',
-      'поэма',
-      'пример',
-      'воздух',
-      'доска',
-      'право',
-      'ценность',
-      'плавание',
-      'сторона',
-      'танец',
-      'лодка',
-    ];
-    const shuffleInitialWords = shuffle(initialWords).slice(0, 7);
-    const shuffleWrongWords = shuffle(wrongWords).slice(0, 3);
-    const totalRes = shuffle([...shuffleInitialWords, ...shuffleWrongWords]);
-    console.log(shuffleInitialWords);
-    console.log(shuffleWrongWords);
-    setWords(totalRes);
-    return { initialWords, shuffleInitialWords };
-  }, []);
+  const { initialWords, shuffleInitialWords, shuffleWrongWords } =
+    useMemo(() => {
+      const initialWords = [
+        'полдень',
+        'секция',
+        'тюбик',
+        'медведь',
+        'рюкзак',
+        'сироп',
+        'цвет',
+        'ремень',
+        'брат',
+        'бумага',
+        'разум',
+        'точка',
+        'офис',
+      ];
+      const wrongWords = [
+        'рис',
+        'поэма',
+        'пример',
+        'воздух',
+        'доска',
+        'право',
+        'ценность',
+        'плавание',
+        'сторона',
+        'танец',
+        'лодка',
+      ];
+      const shuffleInitialWords = shuffle(initialWords);
+      const shuffleWrongWords = shuffle(wrongWords).slice(0, 3);
+      const totalRes = shuffle([...shuffleInitialWords, ...shuffleWrongWords]);
+      console.log(shuffleInitialWords);
+      console.log(shuffleWrongWords);
+      setWords(totalRes);
+      return { initialWords, shuffleInitialWords, shuffleWrongWords };
+    }, []);
 
   const onStart = () => {
     setShowIntro(!showIntro);
@@ -129,6 +130,7 @@ export default function MemoryTest() {
             activeWord={words[0]}
             shuffleInitialWords={shuffleInitialWords}
             approvedWords={approvedWords}
+            totalSteps={initialWords.length + shuffleWrongWords.length}
             setWords={setWords}
             setShowResult={setShowResult}
             setShowSwipeView={setShowSwipeView}
@@ -142,6 +144,9 @@ export default function MemoryTest() {
             score={score}
             waves={localAnimations.waves}
             totalLen={shuffleInitialWords.length}
+            initialWords={initialWords}
+            approvedWords={approvedWords}
+            shuffleWrongWords={shuffleWrongWords}
           />
         )}
       </View>

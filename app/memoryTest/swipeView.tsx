@@ -18,12 +18,13 @@ type SwipeListProps = {
   activeWord: string;
   shuffleInitialWords: string[];
   approvedWords: string[];
+  totalSteps: number;
   setWords: React.Dispatch<React.SetStateAction<string[]>>;
   setShowResult: React.Dispatch<React.SetStateAction<boolean>>;
   setShowSwipeView: React.Dispatch<React.SetStateAction<boolean>>;
   setApprovedWords: React.Dispatch<React.SetStateAction<string[]>>;
   setScore: React.Dispatch<
-    React.SetStateAction<{ correct: number; percentage: number; fine: number }>
+    React.SetStateAction<{ correct: number; percentage: number }>
   >;
 };
 
@@ -33,6 +34,7 @@ export default function SwipeView({
   activeWord,
   shuffleInitialWords,
   approvedWords,
+  totalSteps,
   setWords,
   setShowResult,
   setShowSwipeView,
@@ -64,11 +66,11 @@ export default function SwipeView({
   }, [words]);
   const onClick = () => {
     console.log(approvedWords);
-    const { correct, percentage, fine } = getMemoryScore(
+    const { correct, percentage } = getMemoryScore(
       shuffleInitialWords,
       approvedWords
     );
-    setScore({ correct, percentage, fine });
+    setScore({ correct, percentage });
     setShowSwipeView(false);
     setShowResult(true);
   };
@@ -126,7 +128,7 @@ export default function SwipeView({
   });
   return (
     <View style={styles.wrapper}>
-      <ProgressBar step={step} steps={10} height={4} />
+      <ProgressBar step={step} steps={totalSteps} height={4} />
       {words.length == 0 ? (
         <View
           style={{ ...styles.lottieWrapper, marginTop: windowHeight * 0.4 }}
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     width: '100%',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
   },
   container: {
     position: 'relative',
@@ -206,6 +208,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   lottieWrapper: {
+    justifyContent: 'center',
     alignItems: 'center',
   },
   lottieContainer: {

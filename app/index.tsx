@@ -14,7 +14,7 @@ import MenuItem from './components/menuItem';
 // import MainChallenge from './challenge';
 //////////////////////////////////////
 // import CountTest from './training/countTest';
-// import MemoryTest from './memoryTest';
+import MemoryTest from './memoryTest';
 
 const localAssets = {
   exercise: require('../assets/images/brain.svg'),

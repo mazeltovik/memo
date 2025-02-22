@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.mazeltovik.memo"
     },
     "web": {
       "bundler": "metro",
@@ -36,12 +37,22 @@
       [
         "expo-font",
         {
-          "fonts": ["../assets/fonts/PoiretOne-Regular.ttf"]
+          "fonts": [
+            "./assets/fonts/PoiretOne-Regular.ttf"
+          ]
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a5c9c9d0-223c-46ed-847d-40b79ddd7d0b"
+      }
     }
   }
 }

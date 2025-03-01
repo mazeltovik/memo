@@ -119,7 +119,7 @@ export default function App() {
           />
           <MenuItem
             text={'статистика'}
-            href={''}
+            href={'/statistic'}
             path={localAssets.statistic}
           />
         </View>

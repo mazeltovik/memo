@@ -343,6 +343,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   textInput: {
+    height: 48,
     textAlign: 'center',
     borderRadius: 8,
     backgroundColor: '#252b43',

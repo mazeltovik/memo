@@ -9,11 +9,13 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Paths } from 'expo-file-system/next';
 import LottieView from 'lottie-react-native';
+import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
 import { localAnimations } from '../index';
 import formatDuration from '../scripts/formatDuration';
-import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
-
+import { Init } from '../scripts/filesystem/types';
+import { getData, saveMainChallengeRes } from '../scripts/filesystem/fs';
 enum Evaluation {
   gold = 120,
   silver = 180,
@@ -67,13 +69,32 @@ export default function ResView({
       uncorrect == totalChallenge
         ? ''
         : totalTime <= Evaluation.gold
-        ? 'gold'
+        ? 'золото'
         : totalTime > Evaluation.gold && totalTime <= Evaluation.silver
-        ? 'silver'
+        ? 'серебро'
         : totalTime > Evaluation.silver && totalTime <= Evaluation.bronze
-        ? 'bronze'
-        : '';
+        ? 'бронза'
+        : 'новичок';
     return { formatedTime, evaluation, fine };
+  }, []);
+  useEffect(() => {
+    try {
+      let { currentDay } = getData<Init>(
+        Paths.document,
+        'memoData',
+        'init.json'
+      );
+      saveMainChallengeRes(Paths.document, 'memoData', 'challenge.json', {
+        currentDay,
+        correct,
+        totalChallenge,
+        formatedTime,
+        evaluation,
+        fine,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
   useEffect(() => {
     Animated.sequence([
@@ -197,22 +218,22 @@ export default function ResView({
                 autoPlay={true}
                 loop={false}
                 source={
-                  evaluation == 'gold'
+                  evaluation == 'золото'
                     ? localAnimations.goldMedal
-                    : evaluation == 'silver'
+                    : evaluation == 'серебро'
                     ? localAnimations.silverMedal
-                    : evaluation == 'bronze'
+                    : evaluation == 'бронза'
                     ? localAnimations.bronzeMedal
                     : localAnimations.chill
                 }
                 style={styles.lottieContainer}
               />
               <Text style={styles.evaluationText}>
-                {evaluation == 'gold'
+                {evaluation == 'золото'
                   ? 'Вычислительная машина'
-                  : evaluation == 'silver'
+                  : evaluation == 'серебро'
                   ? 'Вычислительный эксперт'
-                  : evaluation == 'bronze'
+                  : evaluation == 'бронза'
                   ? 'Мастер вычислений'
                   : 'Новичок'}
               </Text>

@@ -8,9 +8,12 @@ import {
   Text,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { Paths } from 'expo-file-system/next';
 import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
 import ProgressBar from '../components/progressBar';
 import getMemoryScore from '../scripts/getMemoryScore';
+import { saveMemoryTestRes, getData } from '../scripts/filesystem/fs';
+import { Init } from '../scripts/filesystem/types';
 
 type SwipeListProps = {
   windowHeight: number;
@@ -41,6 +44,7 @@ export default function SwipeView({
   setApprovedWords,
   setScore,
 }: SwipeListProps) {
+  console.log('render swipe view');
   const [step, setStep] = useState(0);
   const swipe = useRef(new Animated.ValueXY()).current;
   const titlSign = useRef(new Animated.Value(1)).current;
@@ -54,6 +58,28 @@ export default function SwipeView({
     if (words.length > 0) {
       animatedOpacity.start();
     }
+    if (words.length == 0) {
+      const { correct, percentage } = getMemoryScore(
+        shuffleInitialWords,
+        approvedWords
+      );
+      try {
+        let { currentDay } = getData<Init>(
+          Paths.document,
+          'memoData',
+          'init.json'
+        );
+        saveMemoryTestRes(Paths.document, 'memoData', 'memoryTest.json', {
+          currentDay,
+          correct,
+          percentage,
+          totalLen: shuffleInitialWords.length,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+      setScore({ correct, percentage });
+    }
     return () => {
       swipe.setValue({ x: 0, y: 0 });
       animatedOpacity.reset();
@@ -65,12 +91,6 @@ export default function SwipeView({
     });
   }, [words]);
   const onClick = () => {
-    console.log(approvedWords);
-    const { correct, percentage } = getMemoryScore(
-      shuffleInitialWords,
-      approvedWords
-    );
-    setScore({ correct, percentage });
     setShowSwipeView(false);
     setShowResult(true);
   };

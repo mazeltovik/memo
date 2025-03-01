@@ -45,10 +45,9 @@ export default function IntroModal({
 
 const styles = StyleSheet.create({
   modalWrapper: {
+    padding: 16,
     flex: 1,
     justifyContent: 'center',
-    paddingLeft: 16,
-    paddingRight: 16,
   },
   modalContainer: {
     flex: 1,

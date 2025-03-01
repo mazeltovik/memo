@@ -10,6 +10,7 @@ import {
 import { useWindowDimensions } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { useRouter } from 'expo-router';
+import { Paths } from 'expo-file-system/next';
 import MainModal from '../components/modalView';
 import BackHandlerModal from '../components/modals/backHandlerModal';
 import Clock from '../components/clock';
@@ -18,6 +19,8 @@ import ButtonWrapper, {
   StartBtn,
 } from '../components/buttonWrapper';
 import formatDuration from '../scripts/formatDuration';
+import { getData, saveCountTestRes } from '../scripts/filesystem/fs';
+import { Init } from '../scripts/filesystem/types';
 import { localAnimations } from '../index';
 
 enum Evaluation {
@@ -34,13 +37,43 @@ export default function CountTest() {
   const [stop, setStop] = useState(false);
   const [time, setTime] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showMedal, setShowMedal] = useState(false);
+  const [score, setScore] = useState({
+    formatedTime: '',
+    evaluation: '',
+  });
   const timeOpacity = useAnimatedValue(0);
   const timeTranslate = useAnimatedValue(-windowWidth);
-  const [showMedal, setShowMedal] = useState(false);
+  const stopOpacity = useAnimatedValue(0);
   const onStart = () => {
     setStart(true);
   };
   const onStop = () => {
+    const formatedTime = formatDuration(0, time);
+    const evaluation =
+      time <= Evaluation.gold
+        ? 'повелитель счета'
+        : time > Evaluation.gold && time <= Evaluation.silver
+        ? 'магистр счета'
+        : time > Evaluation.silver && time <= Evaluation.bronze
+        ? 'страж счета'
+        : 'новичок';
+    try {
+      let { currentDay } = getData<Init>(
+        Paths.document,
+        'memoData',
+        'init.json'
+      );
+      saveCountTestRes(Paths.document, 'memoData', 'countTest.json', {
+        time,
+        formatedTime,
+        evaluation,
+        currentDay,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+    setScore({ formatedTime, evaluation });
     setStop(!stop);
   };
   const handleDismissAll = () => {
@@ -80,6 +113,16 @@ export default function CountTest() {
       });
     }
   }, [stop]);
+  useEffect(() => {
+    if (start) {
+      Animated.timing(stopOpacity, {
+        toValue: 1,
+        duration: 1000,
+        delay: 3500,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [start]);
   return (
     <View style={styles.wrapper}>
       <MainModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
@@ -96,20 +139,28 @@ export default function CountTest() {
         </View>
       )}
       {start && (
-        <Clock
-          windowWidth={windowWidth}
-          windowHeight={windowHeight}
-          finishedAnim={finishedAnim}
-          setFinishedAnim={setFinishedAnim}
-          stop={stop}
-          time={time}
-          setTime={setTime}
-        />
-      )}
-      {finishedAnim && !stop && (
-        <ButtonWrapper>
-          <ButtonContainer text="стоп" onClick={onStop} />
-        </ButtonWrapper>
+        <>
+          <Clock
+            windowWidth={windowWidth}
+            windowHeight={windowHeight}
+            finishedAnim={finishedAnim}
+            setFinishedAnim={setFinishedAnim}
+            stop={stop}
+            time={time}
+            setTime={setTime}
+          />
+          <Animated.View
+            style={[
+              {
+                opacity: stopOpacity,
+              },
+            ]}
+          >
+            <ButtonWrapper>
+              <ButtonContainer text="стоп" onClick={onStop} />
+            </ButtonWrapper>
+          </Animated.View>
+        </>
       )}
       {stop && (
         <View style={styles.resContainer}>
@@ -134,7 +185,7 @@ export default function CountTest() {
               ]}
             >
               <Text style={styles.infoText}>Время:</Text>
-              <Text style={styles.infoText}>{formatDuration(0, time)}</Text>
+              <Text style={styles.infoText}>{score.formatedTime}</Text>
             </Animated.View>
             {showMedal && (
               <View style={styles.lottieWrapper}>
@@ -152,15 +203,7 @@ export default function CountTest() {
                   }
                   style={styles.lottieContainer}
                 />
-                <Text style={styles.evaluationText}>
-                  {time <= Evaluation.gold
-                    ? 'повелитель счета'
-                    : time > Evaluation.gold && time <= Evaluation.silver
-                    ? 'магистр счета'
-                    : time > Evaluation.silver && time <= Evaluation.bronze
-                    ? 'страж счета'
-                    : 'новичок'}
-                </Text>
+                <Text style={styles.evaluationText}>{score.evaluation}</Text>
               </View>
             )}
           </View>
@@ -234,7 +277,6 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   infoText: {
-    textTransform: 'capitalize',
     color: '#fbd499',
     fontFamily: 'Poiret-One',
     fontWeight: 'regular',

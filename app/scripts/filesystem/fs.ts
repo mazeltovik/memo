@@ -44,8 +44,7 @@ export function getData<T>(
   try {
     const file = new File(directory, folder, fileName);
     const currentJsonData = file.text();
-    const parsedData: T = JSON.parse(currentJsonData);
-    return parsedData;
+    return currentJsonData.length? JSON.parse(currentJsonData) : null;
   } catch (err) {
     throw new Error(`File getting issue: ${fileName} file`);
   }

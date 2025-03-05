@@ -1,7 +1,11 @@
 import { Tabs } from 'expo-router';
 import { Image } from 'expo-image';
+import { Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function TabLayout() {
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={{
@@ -23,17 +27,34 @@ export default function TabLayout() {
           fontFamily: 'Poiret-One',
           fontWeight: 'regular',
         },
+        headerShown: true,
+        headerLeft: () => {
+          return (
+            <Pressable
+              onPress={() => router.dismissAll()}
+              style={{
+                paddingHorizontal: 8,
+              }}
+            >
+              <Ionicons
+                name="arrow-back-circle-sharp"
+                size={40}
+                color="#daa543"
+              />
+            </Pressable>
+          );
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Тренировка',
-          tabBarIcon: () => (
+          tabBarIcon: ({ focused }) => (
             <Image
               alt={'тренировка'}
               source={require('../../../assets/images/brain.svg')}
-              style={[{ width: 30, height: 30 }]}
+              style={[{ width: 30, height: 30, opacity: focused ? 1 : 0.5 }]}
             />
           ),
         }}
@@ -42,11 +63,11 @@ export default function TabLayout() {
         name="countTestRes"
         options={{
           title: 'Тест на счёт',
-          tabBarIcon: () => (
+          tabBarIcon: ({ focused }) => (
             <Image
               alt={'тест на счет'}
               source={require('../../../assets/images/timer.svg')}
-              style={[{ width: 30, height: 30 }]}
+              style={[{ width: 30, height: 30, opacity: focused ? 1 : 0.5 }]}
             />
           ),
         }}
@@ -55,11 +76,11 @@ export default function TabLayout() {
         name="memoryTestRes"
         options={{
           title: 'Тест на память',
-          tabBarIcon: () => (
+          tabBarIcon: ({ focused }) => (
             <Image
               alt={'тест на память'}
               source={require('../../../assets/images/cpu.svg')}
-              style={[{ width: 30, height: 30 }]}
+              style={[{ width: 30, height: 30, opacity: focused ? 1 : 0.5 }]}
             />
           ),
         }}

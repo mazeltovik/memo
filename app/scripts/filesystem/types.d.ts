@@ -4,6 +4,7 @@ export type Init = {
 }
 
 export type ChallengeSavingData = {
+    date:string,
     currentDay:string,
     correct: number;
     totalChallenge: number;
@@ -13,6 +14,7 @@ export type ChallengeSavingData = {
 };
 
 export type CountTestSavingData = {
+    date:string,
     currentDay:string,
     time:number;
     formatedTime: string;
@@ -20,6 +22,7 @@ export type CountTestSavingData = {
 }
 
 export type MemoryTestSavingData = {
+    date:string,
     currentDay:string,
     correct: number;
     totalLen: number;

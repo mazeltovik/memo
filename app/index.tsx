@@ -1,17 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 import MenuItem from './components/menuItem';
-// import Carousel from './components/carousel';
-// import introSlides from './slides/intro/introSlides';
-// import Tutorial from './tutorial';
-// import WordTest from './training/wordTest';
-// import MainChallenge from './challenge';
-//////////////////////////////////////
-// import CountTest from './training/countTest';
-// import MemoryTest from './memoryTest';
 import IntroModal from './components/modals/introModal';
 import MainModal from './components/modalView';
-import { Paths, Directory, File } from 'expo-file-system/next';
+import { Paths } from 'expo-file-system/next';
 import { Init } from './scripts/filesystem/types';
 import {
   isDirExist,
@@ -75,6 +67,7 @@ export default function App() {
           lastEntryDate,
           currentDay
         );
+        console.log(freshEntryDate);
         saveInit(Paths.document, dirName, 'init.json', {
           lastEntryDate: freshEntryDate,
           currentDay: newCurrentDay,

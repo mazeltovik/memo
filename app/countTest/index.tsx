@@ -22,6 +22,7 @@ import formatDuration from '../scripts/formatDuration';
 import { getData, saveCountTestRes } from '../scripts/filesystem/fs';
 import { Init } from '../scripts/filesystem/types';
 import { localAnimations } from '../index';
+import getDate from '../scripts/getDate';
 
 enum Evaluation {
   gold = 60,
@@ -64,7 +65,9 @@ export default function CountTest() {
         'memoData',
         'init.json'
       );
+      const date = getDate();
       saveCountTestRes(Paths.document, 'memoData', 'countTest.json', {
+        date,
         time,
         formatedTime,
         evaluation,

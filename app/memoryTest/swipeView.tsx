@@ -13,6 +13,7 @@ import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
 import ProgressBar from '../components/progressBar';
 import getMemoryScore from '../scripts/getMemoryScore';
 import { saveMemoryTestRes, getData } from '../scripts/filesystem/fs';
+import getDate from '../scripts/getDate';
 import { Init } from '../scripts/filesystem/types';
 
 type SwipeListProps = {
@@ -44,7 +45,6 @@ export default function SwipeView({
   setApprovedWords,
   setScore,
 }: SwipeListProps) {
-  console.log('render swipe view');
   const [step, setStep] = useState(0);
   const swipe = useRef(new Animated.ValueXY()).current;
   const titlSign = useRef(new Animated.Value(1)).current;
@@ -69,7 +69,9 @@ export default function SwipeView({
           'memoData',
           'init.json'
         );
+        const date = getDate();
         saveMemoryTestRes(Paths.document, 'memoData', 'memoryTest.json', {
+          date,
           currentDay,
           correct,
           percentage,

@@ -16,6 +16,8 @@ import { localAnimations } from '../index';
 import formatDuration from '../scripts/formatDuration';
 import { Init } from '../scripts/filesystem/types';
 import { getData, saveMainChallengeRes } from '../scripts/filesystem/fs';
+import getDate from '../scripts/getDate';
+
 enum Evaluation {
   gold = 120,
   silver = 180,
@@ -84,7 +86,9 @@ export default function ResView({
         'memoData',
         'init.json'
       );
+      const date = getDate();
       saveMainChallengeRes(Paths.document, 'memoData', 'challenge.json', {
+        date,
         currentDay,
         correct,
         totalChallenge,

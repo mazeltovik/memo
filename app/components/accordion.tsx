@@ -65,6 +65,19 @@ const ChallengeItem = ({ item, isActive, onPress, height }: ItemProps) => {
               },
             ]}
           >
+            {(item as ChallengeSavingData).date}
+          </Text>
+        </View>
+        <View style={styles.content}>
+          <Text style={styles.itemText}>Время:</Text>
+          <Text
+            style={[
+              styles.itemText,
+              {
+                textAlign: 'right',
+              },
+            ]}
+          >
             {(item as ChallengeSavingData).formatedTime}
           </Text>
         </View>
@@ -153,7 +166,7 @@ const CountTestItem = ({ item, isActive, onPress, height }: ItemProps) => {
               },
             ]}
           >
-            {(item as CountTestSavingData).formatedTime}
+            {(item as CountTestSavingData).date}
           </Text>
         </View>
         <View style={styles.content}>
@@ -216,6 +229,19 @@ const MemoryTestItem = ({ item, isActive, onPress, height }: ItemProps) => {
         >{`День тренировки: ${item.currentDay}`}</Text>
       </TouchableOpacity>
       <Animated.View style={[styles.itemWrapper, { height: contentHeight }]}>
+        <View style={styles.content}>
+          <Text style={styles.itemText}>Дата:</Text>
+          <Text
+            style={[
+              styles.itemText,
+              {
+                textAlign: 'right',
+              },
+            ]}
+          >
+            {(item as CountTestSavingData).date}
+          </Text>
+        </View>
         <View style={styles.content}>
           <Text style={styles.itemText}>Правильно:</Text>
           <Text
@@ -348,9 +374,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 8,
     backgroundColor: '#f9f9f9',
     overflow: 'hidden',
-  },
-  itemContainer: {
-    backgroundColor: 'white',
   },
   content: {
     justifyContent: 'space-between',

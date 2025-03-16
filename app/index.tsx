@@ -4,22 +4,26 @@ import MenuItem from './components/menuItem';
 import IntroModal from './components/modals/introModal';
 import MainModal from './components/modalView';
 import { Paths } from 'expo-file-system/next';
-import { Init } from './scripts/filesystem/types';
-import {
-  isDirExist,
+import Progress from './scripts/filesystem/types';
+import isDirExist, {
   createDir,
   createFile,
   getData,
   deleteFolder,
   saveInit,
 } from './scripts/filesystem/fs';
-import getCurrentDay from './scripts/getCurrentDay';
+import getDiffDate from './scripts/getDiffDate';
+import fsConstants from './scripts/filesystem/constants';
+import getNextDate from './scripts/getNextDate';
 
-const localAssets = {
+export const localAssets = {
   exercise: require('../assets/images/brain.svg'),
   training: require('../assets/images/tests.svg'),
   learning: require('../assets/images/book-open-text.svg'),
   statistic: require('../assets/images/chart-line.svg'),
+  intro: require('../assets/images/circle-help.svg'),
+  time: require('../assets/images/timer.svg'),
+  memory: require('../assets/images/cpu.svg'),
 };
 
 export const localAnimations = {
@@ -27,51 +31,51 @@ export const localAnimations = {
   silverMedal: require('../assets/animations/silverMedal.json'),
   bronzeMedal: require('../assets/animations/bronzeMedal.json'),
   chill: require('../assets/animations/chill.json'),
+  waves: require('../assets/animations/waves.json'),
 };
 
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
     const preparationInit = () => {
-      const dirName = 'memoData';
-      // const data = getData<ChallengeSavingData[]>(
-      //   Paths.document,
-      //   dirName,
-      //   'init.json'
-      // );
-      // console.log(data);
-      // deleteFolder(Paths.document, dirName);
-      // const data = new Directory(Paths.document, dirName).list();
-      // console.log(data);
+      const {
+        dirName,
+        initFile,
+        challengeFile,
+        countTestFile,
+        memoryTestFile,
+      } = fsConstants;
+      // const res = deleteFolder(Paths.document, dirName);
+      // console.log(res);
       const isExist = isDirExist(Paths.document, dirName);
       if (!isExist) {
         const isDirCreated = createDir(Paths.document, dirName);
         if (isDirCreated) {
-          createFile(Paths.document, dirName, 'init.json');
-          saveInit(Paths.document, dirName, 'init.json', {
-            lastEntryDate: new Date().toString(),
-            currentDay: 1,
-          });
-          createFile(Paths.document, dirName, 'challenge.json');
-          createFile(Paths.document, dirName, 'countTest.json');
-          createFile(Paths.document, dirName, 'memoryTest.json');
+          createFile(Paths.document, dirName, initFile);
+          createFile(Paths.document, dirName, challengeFile);
+          createFile(Paths.document, dirName, countTestFile);
+          createFile(Paths.document, dirName, memoryTestFile);
         }
         setModalVisible(true);
       } else {
-        let { lastEntryDate, currentDay } = getData<Init>(
-          Paths.document,
-          dirName,
-          'init.json'
-        );
-        const { freshEntryDate, newCurrentDay } = getCurrentDay(
-          lastEntryDate,
-          currentDay
-        );
-        console.log(freshEntryDate);
-        saveInit(Paths.document, dirName, 'init.json', {
-          lastEntryDate: freshEntryDate,
-          currentDay: newCurrentDay,
-        });
+        const data = getData<Progress>(Paths.document, dirName, initFile);
+        if (data) {
+          const nowDate = new Date().toString();
+          const { start, checkDay, finish, currentDay, visitedDay } = data;
+          const diffDays = getDiffDate(visitedDay, nowDate);
+          if (diffDays) {
+            const newCurrentDay = currentDay + diffDays;
+            const newCheckDay =
+              newCurrentDay % 5 == 0 ? getNextDate(checkDay, 5) : checkDay;
+            saveInit(Paths.document, dirName, initFile, {
+              start,
+              finish,
+              currentDay: newCurrentDay,
+              visitedDay: nowDate,
+              checkDay: newCheckDay,
+            });
+          }
+        }
       }
     };
     try {
@@ -94,25 +98,25 @@ export default function App() {
       <View style={styles.navWrapper}>
         <View style={styles.navContainer}>
           <MenuItem
-            text={'тренировка'}
-            href={'/challenge'}
+            text={'Тренировка'}
+            href={'./challenge'}
             path={localAssets.exercise}
           />
           <MenuItem
-            text={'тесты'}
-            href={'/testing'}
+            text={'Тесты'}
+            href={'./testing'}
             path={localAssets.training}
           />
         </View>
         <View style={styles.navContainer}>
           <MenuItem
-            text={'обучение'}
-            href={'/learning'}
+            text={'Обучение'}
+            href={'./learning'}
             path={localAssets.learning}
           />
           <MenuItem
-            text={'статистика'}
-            href={'/statistic'}
+            text={'Прогресс'}
+            href={'./progress'}
             path={localAssets.statistic}
           />
         </View>
@@ -127,8 +131,7 @@ export default function App() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    paddingTop: 16,
-    paddingBottom: 16,
+    padding: 16,
     backgroundColor: '#1d2029',
     justifyContent: 'space-between',
   },

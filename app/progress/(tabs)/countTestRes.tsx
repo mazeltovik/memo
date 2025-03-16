@@ -7,20 +7,22 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MainModal from '@/app/components/modalView';
 import DeleteHistoryModal from '@/app/components/modals/deleteHistoryModal';
 import { getData } from '@/app/scripts/filesystem/fs';
-import { CountTestSavingData } from '@/app/scripts/filesystem/types';
+import { CountTestData } from '@/app/scripts/filesystem/types';
+import fsConstants from '@/app/scripts/filesystem/constants';
 
 export default function CounteTestRes() {
-  const [data, setData] = useState<CountTestSavingData[]>([]);
+  const [data, setData] = useState<CountTestData[] | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const onPress = () => {
     setModalVisible(true);
   };
   useEffect(() => {
     const gettingData = () => {
-      const data = getData<CountTestSavingData[]>(
+      const { dirName, countTestFile } = fsConstants;
+      const data = getData<CountTestData[]>(
         Paths.document,
-        'memoData',
-        'countTest.json'
+        dirName,
+        countTestFile
       );
       setData(data);
     };
@@ -33,44 +35,56 @@ export default function CounteTestRes() {
 
   return (
     <View style={styles.wrapper}>
-      <MainModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
-        <DeleteHistoryModal
+      <View style={styles.container}>
+        <MainModal
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
-        />
-      </MainModal>
-      {data && (
-        <View style={styles.deleteContainer}>
-          <TouchableOpacity onPress={onPress}>
-            <Ionicons name="archive" size={40} color="#a52b36" />
-          </TouchableOpacity>
-        </View>
-      )}
-      {data && (
-        <Accordion data={data} height={170} accordionItem={'counteTest'} />
-      )}
-      {!data && (
-        <View style={styles.lottieWrapper}>
-          <Text style={styles.text}>Пусто</Text>
-          <LottieView
-            autoPlay={true}
-            loop={true}
-            source={require('../../../assets/animations/empty.json')}
-            style={styles.lottieContainer}
+        >
+          <DeleteHistoryModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
           />
-        </View>
-      )}
+        </MainModal>
+        {data && (
+          <View style={styles.deleteContainer}>
+            <TouchableOpacity onPress={onPress}>
+              <Ionicons name="archive" size={40} color="#a52b36" />
+            </TouchableOpacity>
+          </View>
+        )}
+        {data && (
+          <Accordion data={data} height={170} accordionItem={'counteTest'} />
+        )}
+        {!data && (
+          <View style={styles.lottieWrapper}>
+            <Text style={styles.text}>Пусто</Text>
+            <LottieView
+              autoPlay={true}
+              loop={true}
+              source={require('../../../assets/animations/empty.json')}
+              style={styles.lottieContainer}
+            />
+          </View>
+        )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: '#252b43',
+    backgroundColor: '#1d2029',
     flex: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#252b43',
+    borderRadius: 8,
+    margin: 16,
   },
   deleteContainer: {
     paddingHorizontal: 8,
+    paddingTop: 8,
     alignItems: 'flex-end',
   },
   lottieWrapper: {

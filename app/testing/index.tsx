@@ -1,11 +1,7 @@
 import { Stack } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import MenuItem from '../components/menuItem';
-
-const localAssets = {
-  time: require('../../assets/images/timer.svg'),
-  memory: require('../../assets/images/cpu.svg'),
-};
+import { localAssets } from '../index';
 
 export default function Testing() {
   return (
@@ -26,12 +22,12 @@ export default function Testing() {
       />
       <View style={styles.navContainer}>
         <MenuItem
-          text={'тест на счет'}
+          text={'Тест на счет'}
           href={'../countTest'}
           path={localAssets.time}
         />
         <MenuItem
-          text={'тест на память'}
+          text={'Тест на память'}
           href={'../memoryTest'}
           path={localAssets.memory}
         />
@@ -43,8 +39,7 @@ export default function Testing() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    paddingTop: 16,
-    paddingBottom: 16,
+    padding: 16,
     backgroundColor: '#1d2029',
     justifyContent: 'center',
   },

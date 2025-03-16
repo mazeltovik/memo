@@ -1,6 +1,11 @@
-import { StyleSheet, Pressable, Animated, View } from 'react-native';
+import {
+  StyleSheet,
+  Pressable,
+  Animated,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import { PropsWithChildren, useRef } from 'react';
-import useOnPressAnim from '../hooks/onPress';
 
 type BtnContainer = {
   text: string;
@@ -19,36 +24,26 @@ export function ButtonContainer({
   backgroundColor,
   color,
 }: BtnContainer) {
-  const { scales, onPress } = useOnPressAnim();
   return (
-    <Animated.View
+    <TouchableOpacity
       style={[
         basicBtn.pressContainer,
         {
           backgroundColor: backgroundColor ? backgroundColor : '#333a56',
         },
-        {
-          transform: [
-            { scaleX: scales.x },
-            { scaleY: scales.y },
-            { perspective: 1000 },
-          ],
-        },
       ]}
+      onPress={() => {
+        onClick();
+      }}
     >
-      <Pressable
-        onPress={() => {
-          onPress();
-          onClick();
-        }}
-      >
+      <View>
         <Animated.Text
           style={[basicBtn.pressText, { color: color ? color : '#fbd499' }]}
         >
           {text}
         </Animated.Text>
-      </Pressable>
-    </Animated.View>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -124,6 +119,14 @@ const basicBtn = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   pressText: {
     paddingTop: 8,

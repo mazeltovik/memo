@@ -40,11 +40,13 @@ export default function Countdown({
     start,
     setStart,
   } = useWaveAnim();
-  const coords = useRef(new Animated.ValueXY()).current;
-  const scalesAnim = useRef(new Animated.ValueXY()).current;
+  const coords = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const scalesAnim = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const hoursDegree = useAnimatedValue(180);
   const secondsDegree = useAnimatedValue(225);
   useEffect(() => {
+    const targetX = windowWidth / 2 - 70;
+    const targetY = -windowHeight / 2 + 64;
     Animated.parallel([
       Animated.parallel([
         Animated.timing(hoursDegree, {
@@ -73,13 +75,14 @@ export default function Countdown({
             useNativeDriver: true,
           }),
           Animated.timing(coords, {
-            toValue: { x: windowWidth / 2 - 70, y: -windowHeight / 2 + 64 },
+            toValue: { x: targetX, y: targetY },
             duration: 2000,
             useNativeDriver: true,
           }),
         ]),
       ]),
     ]).start(({ finished }) => {
+      coords.setValue({ x: targetX, y: targetY });
       setFinishedTranslate(finished);
     });
   }, [scalesAnim, coords, hoursDegree, secondsDegree]);
@@ -88,7 +91,7 @@ export default function Countdown({
     if (time < 27 && !start) {
       setStart(true);
       animatedWaves.start();
-      // Vibration.vibrate();
+      Vibration.vibrate();
     }
     if (time == 0) {
       setStart(false);

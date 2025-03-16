@@ -20,9 +20,9 @@ import ButtonWrapper, {
 } from '../components/buttonWrapper';
 import formatDuration from '../scripts/formatDuration';
 import { getData, saveCountTestRes } from '../scripts/filesystem/fs';
-import { Init } from '../scripts/filesystem/types';
+import Progress from '../scripts/filesystem/types';
 import { localAnimations } from '../index';
-import getDate from '../scripts/getDate';
+import fsConstants from '../scripts/filesystem/constants';
 
 enum Evaluation {
   gold = 60,
@@ -45,7 +45,6 @@ export default function CountTest() {
   });
   const timeOpacity = useAnimatedValue(0);
   const timeTranslate = useAnimatedValue(-windowWidth);
-  const stopOpacity = useAnimatedValue(0);
   const onStart = () => {
     setStart(true);
   };
@@ -60,19 +59,19 @@ export default function CountTest() {
         ? 'страж счета'
         : 'новичок';
     try {
-      let { currentDay } = getData<Init>(
-        Paths.document,
-        'memoData',
-        'init.json'
-      );
-      const date = getDate();
-      saveCountTestRes(Paths.document, 'memoData', 'countTest.json', {
-        date,
-        time,
-        formatedTime,
-        evaluation,
-        currentDay,
-      });
+      const { dirName, initFile, countTestFile } = fsConstants;
+      const data = getData<Progress>(Paths.document, dirName, initFile);
+      if (data) {
+        const date = new Date().toString();
+        const { currentDay } = data;
+        saveCountTestRes(Paths.document, dirName, countTestFile, {
+          date,
+          time,
+          formatedTime,
+          evaluation,
+          currentDay: String(currentDay),
+        });
+      }
     } catch (err) {
       console.error(err);
     }
@@ -116,16 +115,6 @@ export default function CountTest() {
       });
     }
   }, [stop]);
-  useEffect(() => {
-    if (start) {
-      Animated.timing(stopOpacity, {
-        toValue: 1,
-        duration: 1000,
-        delay: 3500,
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [start]);
   return (
     <View style={styles.wrapper}>
       <MainModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
@@ -142,28 +131,20 @@ export default function CountTest() {
         </View>
       )}
       {start && (
-        <>
-          <Clock
-            windowWidth={windowWidth}
-            windowHeight={windowHeight}
-            finishedAnim={finishedAnim}
-            setFinishedAnim={setFinishedAnim}
-            stop={stop}
-            time={time}
-            setTime={setTime}
-          />
-          <Animated.View
-            style={[
-              {
-                opacity: stopOpacity,
-              },
-            ]}
-          >
-            <ButtonWrapper>
-              <ButtonContainer text="стоп" onClick={onStop} />
-            </ButtonWrapper>
-          </Animated.View>
-        </>
+        <Clock
+          windowWidth={windowWidth}
+          windowHeight={windowHeight}
+          finishedAnim={finishedAnim}
+          setFinishedAnim={setFinishedAnim}
+          stop={stop}
+          time={time}
+          setTime={setTime}
+        />
+      )}
+      {finishedAnim && !stop && (
+        <ButtonWrapper>
+          <ButtonContainer text="стоп" onClick={onStop} />
+        </ButtonWrapper>
       )}
       {stop && (
         <View style={styles.resContainer}>
@@ -224,6 +205,7 @@ export default function CountTest() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+    paddingHorizontal: 16,
     justifyContent: 'center',
     backgroundColor: '#1d2029',
   },

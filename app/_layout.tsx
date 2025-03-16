@@ -38,8 +38,6 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    paddingLeft: 16,
-    paddingRight: 16,
     backgroundColor: '#1d2029',
   },
 });

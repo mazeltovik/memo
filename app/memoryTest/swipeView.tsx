@@ -13,8 +13,8 @@ import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
 import ProgressBar from '../components/progressBar';
 import getMemoryScore from '../scripts/getMemoryScore';
 import { saveMemoryTestRes, getData } from '../scripts/filesystem/fs';
-import getDate from '../scripts/getDate';
-import { Init } from '../scripts/filesystem/types';
+import Progress from '../scripts/filesystem/types';
+import fsConstants from '../scripts/filesystem/constants';
 
 type SwipeListProps = {
   windowHeight: number;
@@ -64,19 +64,19 @@ export default function SwipeView({
         approvedWords
       );
       try {
-        let { currentDay } = getData<Init>(
-          Paths.document,
-          'memoData',
-          'init.json'
-        );
-        const date = getDate();
-        saveMemoryTestRes(Paths.document, 'memoData', 'memoryTest.json', {
-          date,
-          currentDay,
-          correct,
-          percentage,
-          totalLen: shuffleInitialWords.length,
-        });
+        const { dirName, initFile, memoryTestFile } = fsConstants;
+        const data = getData<Progress>(Paths.document, dirName, initFile);
+        if (data) {
+          const date = new Date().toString();
+          const { currentDay } = data;
+          saveMemoryTestRes(Paths.document, dirName, memoryTestFile, {
+            date,
+            currentDay: String(currentDay),
+            correct,
+            percentage,
+            totalLen: shuffleInitialWords.length,
+          });
+        }
       } catch (err) {
         console.error(err);
       }
@@ -222,7 +222,6 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     width: '100%',
-    // justifyContent: 'space-between',
   },
   container: {
     position: 'relative',

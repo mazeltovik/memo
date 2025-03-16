@@ -27,6 +27,7 @@ export default function Training() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+    paddingHorizontal: 16,
     backgroundColor: '#1d2029',
     justifyContent: 'space-between',
   },

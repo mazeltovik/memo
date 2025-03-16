@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Image } from 'expo-image';
-import { Pressable } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -11,7 +11,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: '#f6c25d',
         headerStyle: {
-          backgroundColor: '#252b43',
+          backgroundColor: '#1d2029',
         },
         headerShadowVisible: false,
         headerTintColor: '#fff',
@@ -21,12 +21,14 @@ export default function TabLayout() {
           color: '#daa543',
         },
         tabBarStyle: {
-          backgroundColor: '#252b43',
+          backgroundColor: '#1d2029',
+          paddingTop: 8,
         },
         tabBarLabelStyle: {
           fontFamily: 'Poiret-One',
           fontWeight: 'regular',
         },
+        tabBarShowLabel: false,
         headerShown: true,
         headerLeft: () => {
           return (
@@ -48,6 +50,17 @@ export default function TabLayout() {
     >
       <Tabs.Screen
         name="index"
+        options={{
+          title: 'Календарь',
+          tabBarIcon: ({ focused }) => (
+            <View style={[{ opacity: focused ? 1 : 0.5 }]}>
+              <Ionicons name="calendar-outline" size={30} color="#fbd499" />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="challengeRes"
         options={{
           title: 'Тренировка',
           tabBarIcon: ({ focused }) => (

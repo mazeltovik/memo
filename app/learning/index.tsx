@@ -1,13 +1,7 @@
 import { Stack } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import MenuItem from '../components/menuItem';
-
-const localAssets = {
-  intro: require('../../assets/images/circle-help.svg'),
-  exercise: require('../../assets/images/brain.svg'),
-  time: require('../../assets/images/timer.svg'),
-  memory: require('../../assets/images/cpu.svg'),
-};
+import { localAssets } from '../index';
 
 export default function Learning() {
   return (
@@ -28,24 +22,24 @@ export default function Learning() {
       />
       <View style={styles.navContainer}>
         <MenuItem
-          text={'введение'}
+          text={'Введение'}
           href={'../slides/intro'}
           path={localAssets.intro}
         />
         <MenuItem
-          text={'тренировка'}
+          text={'Тренировка'}
           href={'../slides/training'}
           path={localAssets.exercise}
         />
       </View>
       <View style={styles.navContainer}>
         <MenuItem
-          text={'тест на счет'}
+          text={'Тест на счет'}
           href={'../slides/countTest'}
           path={localAssets.time}
         />
         <MenuItem
-          text={'тест на память'}
+          text={'Тест на память'}
           href={'../slides/memoryTest'}
           path={localAssets.memory}
         />
@@ -57,8 +51,7 @@ export default function Learning() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    paddingTop: 16,
-    paddingBottom: 16,
+    padding: 16,
     backgroundColor: '#1d2029',
     justifyContent: 'center',
   },

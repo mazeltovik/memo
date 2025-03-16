@@ -1,10 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { BlurView } from 'expo-blur';
 import { Paths } from 'expo-file-system/next';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { MainModalProps } from '../modalView';
 import ButtonWrapper, { ButtonContainer } from '../buttonWrapper';
-import { clearFile, saveInit } from '@/app/scripts/filesystem/fs';
+import { clearFile } from '@/app/scripts/filesystem/fs';
+import fsConstants from '@/app/scripts/filesystem/constants';
 
 export default function DeleteHistoryModal({
   modalVisible,
@@ -12,16 +14,13 @@ export default function DeleteHistoryModal({
 }: MainModalProps) {
   const router = useRouter();
   const approvedPress = () => {
-    const dirName = 'memoData';
+    const { dirName, initFile, challengeFile, countTestFile, memoryTestFile } =
+      fsConstants;
     try {
-      clearFile(Paths.document, dirName, 'challenge.json');
-      clearFile(Paths.document, dirName, 'countTest.json');
-      clearFile(Paths.document, dirName, 'memoryTest.json');
-      clearFile(Paths.document, dirName, 'init.json');
-      saveInit(Paths.document, dirName, 'init.json', {
-        lastEntryDate: new Date().toString(),
-        currentDay: 1,
-      });
+      clearFile(Paths.document, dirName, challengeFile);
+      clearFile(Paths.document, dirName, countTestFile);
+      clearFile(Paths.document, dirName, memoryTestFile);
+      clearFile(Paths.document, dirName, initFile);
     } catch (err) {
       console.error(err);
     }
@@ -32,7 +31,12 @@ export default function DeleteHistoryModal({
     setModalVisible(!modalVisible);
   };
   return (
-    <View style={styles.modalWrapper}>
+    <BlurView
+      intensity={60}
+      experimentalBlurMethod={true}
+      tint="light"
+      style={styles.modalWrapper}
+    >
       <View style={styles.modalContainer}>
         <View>
           <View style={{ alignItems: 'center' }}>
@@ -61,7 +65,7 @@ export default function DeleteHistoryModal({
           </ButtonWrapper>
         </View>
       </View>
-    </View>
+    </BlurView>
   );
 }
 

@@ -1,12 +1,12 @@
 import { File, Directory } from 'expo-file-system/next';
 import {
   Init,
-  ChallengeSavingData,
-  CountTestSavingData,
-  MemoryTestSavingData,
+  ChallengeData,
+  CountTestData,
+  MemoryTestData,
 } from './types';
 
-export function isDirExist(directory: Directory, searchingDir?: string) {
+export default function isDirExist(directory: Directory, searchingDir?: string) {
   return searchingDir
     ? new Directory(directory, searchingDir).exists
     : new Directory(directory).exists;
@@ -44,7 +44,7 @@ export function getData<T>(
   try {
     const file = new File(directory, folder, fileName);
     const currentJsonData = file.text();
-    return currentJsonData.length? JSON.parse(currentJsonData) : null;
+    return currentJsonData.length? JSON.parse(currentJsonData) as T : null;
   } catch (err) {
     throw new Error(`File getting issue: ${fileName} file`);
   }
@@ -69,12 +69,12 @@ export function saveMainChallengeRes(
   directory: Directory,
   folder: string,
   fileName: string,
-  data: ChallengeSavingData
+  data: ChallengeData
 ) {
   try {
     const file = new File(directory, folder, fileName);
     const currentJsonData = file.text();
-    let parsedData: ChallengeSavingData[] = [];
+    let parsedData: ChallengeData[] = [];
     if (!currentJsonData.length) {
       parsedData.push(data);
     } else {
@@ -102,12 +102,12 @@ export function saveCountTestRes(
   directory: Directory,
   folder: string,
   fileName: string,
-  data: CountTestSavingData
+  data: CountTestData
 ) {
   try {
     const file = new File(directory, folder, fileName);
     const currentJsonData = file.text();
-    let parsedData: CountTestSavingData[] = [];
+    let parsedData: CountTestData[] = [];
     if (!currentJsonData.length) {
       parsedData.push(data);
     } else {
@@ -135,12 +135,12 @@ export function saveMemoryTestRes(
   directory: Directory,
   folder: string,
   fileName: string,
-  data: MemoryTestSavingData
+  data: MemoryTestData
 ) {
   try {
     const file = new File(directory, folder, fileName);
     const currentJsonData = file.text();
-    let parsedData: MemoryTestSavingData[] = [];
+    let parsedData: MemoryTestData[] = [];
     if (!currentJsonData.length) {
       parsedData.push(data);
     } else {

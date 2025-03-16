@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 const easeOutExpo = (t: number) => {
   return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);

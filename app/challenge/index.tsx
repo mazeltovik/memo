@@ -8,6 +8,7 @@ import {
   Animated,
   BackHandler,
 } from 'react-native';
+import { Paths } from 'expo-file-system/next';
 import LottieView from 'lottie-react-native';
 import ButtonWrapper, {
   ButtonContainer,
@@ -18,13 +19,32 @@ import ResView from './resView';
 import MainModal from '../components/modalView';
 import BackHandlerModal from '../components/modals/backHandlerModal';
 import getRandomInt, { getRandomEvenInt } from '../scripts/getRandomInt';
+import formatDuration from '../scripts/formatDuration';
+import Progress from '../scripts/filesystem/types';
+import {
+  getData,
+  saveMainChallengeRes,
+  saveInit,
+} from '../scripts/filesystem/fs';
+import getNextDate from '../scripts/getNextDate';
+import getDiffDate from '../scripts/getDiffDate';
+import fsConstants from '../scripts/filesystem/constants';
+
+enum Evaluation {
+  gold = 120,
+  silver = 180,
+  bronze = 240,
+}
 
 enum ChallengeSettings {
-  totalChallenge = 20,
-  plusChallenge = 5,
-  minusChallenge = 5,
-  multiplyChallenge = 5,
-  divideChallenge = 5,
+  totalChallenge = 100,
+  plusChallenge = 30,
+  minusChallenge = 30,
+  multiplyChallenge = 30,
+  divideChallenge = 10,
+  gold = 100,
+  silverMedal = 70,
+  bronzeMedal = 30,
 }
 
 type Operations = '_' | '+' | '-' | '*' | '/';
@@ -42,9 +62,12 @@ type Result = {
 };
 
 export default function MainChallenge() {
+  /animations/;
   const translateY1 = useAnimatedValue(-55);
   const translateY2 = useAnimatedValue(-55);
   const opacity = useAnimatedValue(0);
+
+  /state/;
   const [modalVisible, setModalVisible] = useState(false);
   const [start, setStart] = useState(false);
   const [step, setStep] = useState(0);
@@ -58,6 +81,8 @@ export default function MainChallenge() {
   });
   const [input, onChangeInput] = useState('');
   const [switchToRes, setSwitchToRes] = useState(false);
+
+  /refs/;
   const results = useRef<Result[]>([]);
   const challenges = useRef<Challenge[]>([
     { operation: '_', amount: 0 },
@@ -66,11 +91,14 @@ export default function MainChallenge() {
     { operation: '*', amount: ChallengeSettings.multiplyChallenge },
     { operation: '/', amount: ChallengeSettings.divideChallenge },
   ]);
-  const totalTime = useRef({
+  const settings = useRef({
     startTime: 0,
     finishTime: 0,
+    correct: 0,
+    formatedTime: '',
+    fine: 0,
+    evaluation: '',
   }).current;
-  const correct = useRef(0);
   const animated = Animated.parallel([
     Animated.timing(translateY1, {
       toValue: 0,
@@ -102,7 +130,7 @@ export default function MainChallenge() {
     return () => backHandler.remove();
   }, []);
   useEffect(() => {
-    totalTime.startTime = Math.floor(Date.now() / 1000);
+    settings.startTime = Math.floor(Date.now() / 1000);
   }, []);
   useEffect(() => {
     if (totalChallenge > 0) {
@@ -140,7 +168,84 @@ export default function MainChallenge() {
         }
       }
     } else {
-      totalTime.finishTime = Math.floor(Date.now() / 1000);
+      settings.finishTime = Math.floor(Date.now() / 1000);
+      settings.formatedTime = formatDuration(
+        settings.startTime,
+        settings.finishTime
+      );
+      const timeDiff = settings.finishTime - settings.startTime;
+      const uncorrect = ChallengeSettings.totalChallenge - settings.correct;
+      settings.fine = uncorrect > 0 ? 0.25 * uncorrect : 0;
+      const totalTime = timeDiff + settings.fine;
+      const success =
+        (settings.correct / ChallengeSettings.totalChallenge) * 100;
+      settings.evaluation =
+        totalTime <= Evaluation.gold && success == ChallengeSettings.gold
+          ? 'золото'
+          : totalTime > Evaluation.gold &&
+            totalTime <= Evaluation.silver &&
+            success >= ChallengeSettings.silverMedal
+          ? 'серебро'
+          : totalTime > Evaluation.silver &&
+            totalTime <= Evaluation.bronze &&
+            success >= ChallengeSettings.bronzeMedal
+          ? 'бронза'
+          : 'новичок';
+      const { dirName, initFile, challengeFile } = fsConstants;
+      try {
+        const { correct, formatedTime, evaluation, fine } = settings;
+        const data = getData<Progress>(Paths.document, dirName, initFile);
+        if (!data) {
+          const start = new Date().toString();
+          const finish = getNextDate(start, 60);
+          const checkDay = getNextDate(start, 5);
+          const currentDay = 1;
+          saveInit(Paths.document, dirName, initFile, {
+            start,
+            finish,
+            checkDay,
+            currentDay,
+            visitedDay: start,
+          });
+
+          saveMainChallengeRes(Paths.document, dirName, challengeFile, {
+            date: start,
+            currentDay: String(currentDay),
+            correct,
+            totalChallenge: ChallengeSettings.totalChallenge,
+            formatedTime,
+            evaluation,
+            fine,
+          });
+        } else {
+          const nowDate = new Date().toString();
+          const { start, checkDay, finish, currentDay, visitedDay } = data;
+          const diffDays = getDiffDate(visitedDay, nowDate);
+          if (diffDays) {
+            const newCurrentDay = currentDay + diffDays;
+            const newCheckDay =
+              newCurrentDay % 5 == 0 ? getNextDate(checkDay, 5) : checkDay;
+            saveInit(Paths.document, dirName, initFile, {
+              start,
+              finish,
+              currentDay: newCurrentDay,
+              visitedDay: nowDate,
+              checkDay: newCheckDay,
+            });
+          }
+          saveMainChallengeRes(Paths.document, dirName, challengeFile, {
+            date: nowDate,
+            currentDay: String(currentDay),
+            correct,
+            totalChallenge: ChallengeSettings.totalChallenge,
+            formatedTime,
+            evaluation,
+            fine,
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
   }, [translateY1, translateY2, opacity, totalChallenge]);
   const onClick = () => {
@@ -151,16 +256,16 @@ export default function MainChallenge() {
       if (resInput || resInput == 0) {
         if (operation == '+') {
           calcRes = operand1 + operand2;
-          correct.current += calcRes == resInput ? 1 : 0;
+          settings.correct += calcRes == resInput ? 1 : 0;
         } else if (operation == '-') {
           calcRes = operand1 - operand2;
-          correct.current += calcRes == resInput ? 1 : 0;
+          settings.correct += calcRes == resInput ? 1 : 0;
         } else if (operation == '*') {
           calcRes = operand1 * operand2;
-          correct.current += calcRes == resInput ? 1 : 0;
+          settings.correct += calcRes == resInput ? 1 : 0;
         } else {
           calcRes = operand1 / operand2;
-          correct.current += calcRes == resInput ? 1 : 0;
+          settings.correct += calcRes == resInput ? 1 : 0;
         }
         results.current.push({ operand1, operand2, operation, res: input });
         const currentChallenge = challenges.current.find(
@@ -279,11 +384,12 @@ export default function MainChallenge() {
       )}
       {switchToRes && (
         <ResView
-          startTime={totalTime.startTime}
-          finishTime={totalTime.finishTime}
           results={results.current}
-          correct={correct.current}
+          correct={settings.correct}
           totalChallenge={ChallengeSettings.totalChallenge}
+          formatedTime={settings.formatedTime}
+          fine={settings.fine}
+          evaluation={settings.evaluation}
         />
       )}
     </View>
@@ -295,8 +401,7 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 32,
     backgroundColor: '#1d2029',
-    // paddingLeft: 16,
-    // paddingRight: 16,
+    paddingHorizontal: 16,
     justifyContent: 'space-between',
   },
   startContainer: {

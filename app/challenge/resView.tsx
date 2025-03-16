@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -9,26 +9,9 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Paths } from 'expo-file-system/next';
 import LottieView from 'lottie-react-native';
 import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
 import { localAnimations } from '../index';
-import formatDuration from '../scripts/formatDuration';
-import { Init } from '../scripts/filesystem/types';
-import { getData, saveMainChallengeRes } from '../scripts/filesystem/fs';
-import getDate from '../scripts/getDate';
-
-enum Evaluation {
-  gold = 120,
-  silver = 180,
-  bronze = 240,
-}
-
-// enum Evaluation {
-//   gold = 10,
-//   silver = 20,
-//   bronze = 30,
-// }
 
 type Result = {
   operand1: number;
@@ -40,17 +23,19 @@ type Result = {
 type ResProps = {
   correct: number;
   totalChallenge: number;
-  startTime: number;
-  finishTime: number;
+  formatedTime: string;
+  fine: number;
+  evaluation: string;
   results: Result[];
 };
 
 export default function ResView({
   correct,
   totalChallenge,
-  startTime,
-  finishTime,
   results,
+  formatedTime,
+  fine,
+  evaluation,
 }: ResProps) {
   const { width: windowWidth } = useWindowDimensions();
   const router = useRouter();
@@ -61,45 +46,7 @@ export default function ResView({
   const fineOpacity = useAnimatedValue(0);
   const fineTranslate = useAnimatedValue(-windowWidth);
   const [showMedal, setShowMedal] = useState(false);
-  const { formatedTime, evaluation, fine } = useMemo(() => {
-    const formatedTime = formatDuration(startTime, finishTime);
-    const timeDiff = finishTime - startTime;
-    const uncorrect = totalChallenge - correct;
-    const fine = uncorrect > 0 ? 0.25 * uncorrect : 0;
-    const totalTime = timeDiff + fine;
-    const evaluation =
-      uncorrect == totalChallenge
-        ? ''
-        : totalTime <= Evaluation.gold
-        ? 'золото'
-        : totalTime > Evaluation.gold && totalTime <= Evaluation.silver
-        ? 'серебро'
-        : totalTime > Evaluation.silver && totalTime <= Evaluation.bronze
-        ? 'бронза'
-        : 'новичок';
-    return { formatedTime, evaluation, fine };
-  }, []);
-  useEffect(() => {
-    try {
-      let { currentDay } = getData<Init>(
-        Paths.document,
-        'memoData',
-        'init.json'
-      );
-      const date = getDate();
-      saveMainChallengeRes(Paths.document, 'memoData', 'challenge.json', {
-        date,
-        currentDay,
-        correct,
-        totalChallenge,
-        formatedTime,
-        evaluation,
-        fine,
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
+
   useEffect(() => {
     Animated.sequence([
       Animated.parallel([
@@ -157,7 +104,7 @@ export default function ResView({
       <View style={styles.resultContainer}>
         <View style={styles.score}>
           <View style={styles.titleContainer}>
-            <Text style={styles.titleHeader}>оценка</Text>
+            <Text style={styles.titleHeader}>Оценка</Text>
             <View style={styles.titleUnderline}></View>
           </View>
           <Animated.View

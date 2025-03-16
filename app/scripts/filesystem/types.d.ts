@@ -1,9 +1,13 @@
-export type Init = {
-    lastEntryDate: string,
+type Progress = {
+    start:string,
     currentDay:number,
+    finish:string,
+    checkDay:string,
+    visitedDay: string,
 }
+export default Progress;
 
-export type ChallengeSavingData = {
+export type ChallengeData = {
     date:string,
     currentDay:string,
     correct: number;
@@ -13,7 +17,7 @@ export type ChallengeSavingData = {
     fine: number;
 };
 
-export type CountTestSavingData = {
+export type CountTestData = {
     date:string,
     currentDay:string,
     time:number;
@@ -21,7 +25,7 @@ export type CountTestSavingData = {
     evaluation:string;
 }
 
-export type MemoryTestSavingData = {
+export type MemoryTestData = {
     date:string,
     currentDay:string,
     correct: number;

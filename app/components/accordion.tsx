@@ -7,21 +7,23 @@ import {
   StyleSheet,
   Animated,
 } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import getDate from '../scripts/getDate';
 import {
-  MemoryTestSavingData,
-  ChallengeSavingData,
-  CountTestSavingData,
+  MemoryTestData,
+  ChallengeData,
+  CountTestData,
 } from '../scripts/filesystem/types';
 
 type ItemProps = {
-  item: ChallengeSavingData | MemoryTestSavingData | CountTestSavingData;
+  item: ChallengeData | MemoryTestData | CountTestData;
   isActive: boolean;
   height: number;
   onPress: () => void;
 };
 
 type AccordionProps = {
-  data: MemoryTestSavingData[] | ChallengeSavingData[] | CountTestSavingData[];
+  data: MemoryTestData[] | ChallengeData[] | CountTestData[];
   height: number;
   accordionItem: 'challenge' | 'counteTest' | 'memoryTest';
 };
@@ -65,7 +67,7 @@ const ChallengeItem = ({ item, isActive, onPress, height }: ItemProps) => {
               },
             ]}
           >
-            {(item as ChallengeSavingData).date}
+            {getDate((item as ChallengeData).date)}
           </Text>
         </View>
         <View style={styles.content}>
@@ -91,8 +93,8 @@ const ChallengeItem = ({ item, isActive, onPress, height }: ItemProps) => {
               },
             ]}
           >
-            {`${(item as ChallengeSavingData).correct} из ${
-              (item as ChallengeSavingData).totalChallenge
+            {`${(item as ChallengeData).correct} из ${
+              (item as ChallengeData).totalChallenge
             }`}
           </Text>
         </View>
@@ -106,7 +108,7 @@ const ChallengeItem = ({ item, isActive, onPress, height }: ItemProps) => {
               },
             ]}
           >
-            {`+${(item as ChallengeSavingData).fine} сек`}
+            {`+ ${(item as ChallengeData).fine} сек`}
           </Text>
         </View>
         <View style={styles.content}>
@@ -119,7 +121,7 @@ const ChallengeItem = ({ item, isActive, onPress, height }: ItemProps) => {
               },
             ]}
           >
-            {(item as ChallengeSavingData).evaluation}
+            {(item as ChallengeData).evaluation}
           </Text>
         </View>
       </Animated.View>
@@ -154,6 +156,9 @@ const CountTestItem = ({ item, isActive, onPress, height }: ItemProps) => {
         <Text
           style={styles.headerTitle}
         >{`День тренировки: ${item.currentDay}`}</Text>
+        {Number(item.currentDay) % 5 == 0 && (
+          <Ionicons name="star" size={24} color="#daa543" style={styles.star} />
+        )}
       </TouchableOpacity>
       <Animated.View style={[styles.itemWrapper, { height: contentHeight }]}>
         <View style={styles.content}>
@@ -166,7 +171,7 @@ const CountTestItem = ({ item, isActive, onPress, height }: ItemProps) => {
               },
             ]}
           >
-            {(item as CountTestSavingData).date}
+            {getDate((item as CountTestData).date)}
           </Text>
         </View>
         <View style={styles.content}>
@@ -179,7 +184,7 @@ const CountTestItem = ({ item, isActive, onPress, height }: ItemProps) => {
               },
             ]}
           >
-            {(item as CountTestSavingData).formatedTime}
+            {(item as CountTestData).formatedTime}
           </Text>
         </View>
         <View style={styles.content}>
@@ -192,7 +197,7 @@ const CountTestItem = ({ item, isActive, onPress, height }: ItemProps) => {
               },
             ]}
           >
-            {(item as CountTestSavingData).evaluation}
+            {(item as CountTestData).evaluation}
           </Text>
         </View>
       </Animated.View>
@@ -227,6 +232,9 @@ const MemoryTestItem = ({ item, isActive, onPress, height }: ItemProps) => {
         <Text
           style={styles.headerTitle}
         >{`День тренировки: ${item.currentDay}`}</Text>
+        {Number(item.currentDay) % 5 == 0 && (
+          <Ionicons name="star" size={24} color="#daa543" style={styles.star} />
+        )}
       </TouchableOpacity>
       <Animated.View style={[styles.itemWrapper, { height: contentHeight }]}>
         <View style={styles.content}>
@@ -239,7 +247,7 @@ const MemoryTestItem = ({ item, isActive, onPress, height }: ItemProps) => {
               },
             ]}
           >
-            {(item as CountTestSavingData).date}
+            {getDate((item as CountTestData).date)}
           </Text>
         </View>
         <View style={styles.content}>
@@ -300,7 +308,7 @@ export default function Accordion({
     item,
     index,
   }: {
-    item: ChallengeSavingData | MemoryTestSavingData | CountTestSavingData;
+    item: ChallengeData | MemoryTestData | CountTestData;
     index: number;
   }) => {
     return accordionItem == 'challenge' ? (
@@ -367,6 +375,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Poiret-One',
     fontWeight: 'regular',
     color: '#daa543',
+  },
+  star: {
+    position: 'absolute',
+    right: 0,
+    paddingHorizontal: 8,
   },
   itemWrapper: {
     marginBottom: 10,

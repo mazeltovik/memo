@@ -41,7 +41,7 @@ export default function ResView({
   const translateY = useAnimatedValue(70);
   const scalesAnim = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const translateX = useRef(new Animated.Value(0)).current;
-  const wordsList = useRef<Animated.ScrollView>(null);
+  const wordsList = useRef<ScrollView>(null);
   const onPressItem = useCallback((itemIndex: number) => {
     wordsList?.current?.scrollTo({
       x: itemIndex * windowWidth,

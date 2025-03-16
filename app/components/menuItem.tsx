@@ -2,42 +2,31 @@ import {
   Text,
   StyleSheet,
   View,
-  Animated,
   useWindowDimensions,
-  Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import { Image } from 'expo-image';
-import { Link } from 'expo-router';
-import useOnPressAnim from '../hooks/onPress';
+import { Link, RelativePathString } from 'expo-router';
 
 type MenuItemType = {
   text: string;
-  href: string;
+  href: RelativePathString;
   path: string;
 };
 
 const MenuItem = ({ text, href, path }: MenuItemType) => {
-  const { scales, onPress } = useOnPressAnim();
   const { width: windowWidth } = useWindowDimensions();
-  const onClick = () => {
-    onPress();
-  };
   return (
-    <Animated.View
+    <Link
+      href={href}
       style={[
         menuItemStyles.wrapper,
         { width: windowWidth * 0.5, height: windowWidth * 0.5 },
-        {
-          transform: [
-            { scaleX: scales.x },
-            { scaleY: scales.y },
-            { perspective: 1000 },
-          ],
-        },
       ]}
+      asChild
     >
-      <Link href={href} asChild>
-        <Pressable onPress={onClick} style={menuItemStyles.container}>
+      <TouchableOpacity>
+        <View style={menuItemStyles.container}>
           <View style={menuItemStyles.imgContainer}>
             <Image
               alt={text}
@@ -50,9 +39,9 @@ const MenuItem = ({ text, href, path }: MenuItemType) => {
           <View style={menuItemStyles.textContainer}>
             <Text style={menuItemStyles.text}>{text}</Text>
           </View>
-        </Pressable>
-      </Link>
-    </Animated.View>
+        </View>
+      </TouchableOpacity>
+    </Link>
   );
 };
 
@@ -86,7 +75,6 @@ const menuItemStyles = StyleSheet.create({
     fontFamily: 'Poiret-One',
     fontWeight: 'regular',
     fontSize: 12,
-    textTransform: 'capitalize',
   },
 });
 

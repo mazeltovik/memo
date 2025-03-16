@@ -7,20 +7,22 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MainModal from '@/app/components/modalView';
 import DeleteHistoryModal from '@/app/components/modals/deleteHistoryModal';
 import { getData } from '@/app/scripts/filesystem/fs';
-import { ChallengeSavingData } from '@/app/scripts/filesystem/types';
+import { ChallengeData } from '@/app/scripts/filesystem/types';
+import fsConstants from '@/app/scripts/filesystem/constants';
 
 export default function MainChallenge() {
-  const [data, setData] = useState<ChallengeSavingData[]>([]);
+  const [data, setData] = useState<ChallengeData[] | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const onPress = () => {
     setModalVisible(true);
   };
   useEffect(() => {
     const gettingData = () => {
-      const data = getData<ChallengeSavingData[]>(
+      const { dirName, challengeFile } = fsConstants;
+      const data = getData<ChallengeData[]>(
         Paths.document,
-        'memoData',
-        'challenge.json'
+        dirName,
+        challengeFile
       );
       setData(data);
     };
@@ -33,44 +35,56 @@ export default function MainChallenge() {
 
   return (
     <View style={styles.wrapper}>
-      <MainModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
-        <DeleteHistoryModal
+      <View style={styles.container}>
+        <MainModal
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
-        />
-      </MainModal>
-      {data && (
-        <View style={styles.deleteContainer}>
-          <TouchableOpacity onPress={onPress}>
-            <Ionicons name="archive" size={40} color="#a52b36" />
-          </TouchableOpacity>
-        </View>
-      )}
-      {data && (
-        <Accordion data={data} height={170} accordionItem={'challenge'} />
-      )}
-      {!data && (
-        <View style={styles.lottieWrapper}>
-          <Text style={styles.text}>Пусто</Text>
-          <LottieView
-            autoPlay={true}
-            loop={true}
-            source={require('../../../assets/animations/empty.json')}
-            style={styles.lottieContainer}
+        >
+          <DeleteHistoryModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
           />
-        </View>
-      )}
+        </MainModal>
+        {data && (
+          <View style={styles.deleteContainer}>
+            <TouchableOpacity onPress={onPress}>
+              <Ionicons name="archive" size={40} color="#a52b36" />
+            </TouchableOpacity>
+          </View>
+        )}
+        {data && (
+          <Accordion data={data} height={250} accordionItem={'challenge'} />
+        )}
+        {!data && (
+          <View style={styles.lottieWrapper}>
+            <Text style={styles.text}>Пусто</Text>
+            <LottieView
+              autoPlay={true}
+              loop={true}
+              source={require('../../../assets/animations/empty.json')}
+              style={styles.lottieContainer}
+            />
+          </View>
+        )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: '#252b43',
+    backgroundColor: '#1d2029',
     flex: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#252b43',
+    borderRadius: 8,
+    margin: 16,
   },
   deleteContainer: {
     paddingHorizontal: 8,
+    paddingTop: 8,
     alignItems: 'flex-end',
   },
   lottieWrapper: {

@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { MainModalProps } from '../modalView';
 import ButtonWrapper, { ButtonContainer } from '../buttonWrapper';
 
@@ -17,8 +19,16 @@ export default function BackHandlerModal({
     setModalVisible(!modalVisible);
   };
   return (
-    <View style={styles.modalWrapper}>
+    <BlurView
+      intensity={60}
+      experimentalBlurMethod={true}
+      tint="light"
+      style={styles.modalWrapper}
+    >
       <View style={styles.modalContainer}>
+        <View style={{ alignItems: 'center' }}>
+          <Ionicons name="alert" size={40} color="#a52b36" />
+        </View>
         <Text style={styles.modalHeader}>Вы уверены?</Text>
         <View style={{ justifyContent: 'space-around' }}>
           <ButtonWrapper>
@@ -38,7 +48,7 @@ export default function BackHandlerModal({
           </ButtonWrapper>
         </View>
       </View>
-    </View>
+    </BlurView>
   );
 }
 

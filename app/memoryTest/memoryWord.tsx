@@ -66,9 +66,10 @@ const wordTileStyles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
-    color: 'white',
     textTransform: 'capitalize',
-    fontFamily: 'Nunito-Regular',
+    fontFamily: 'Poiret-One',
+    fontWeight: 'regular',
+    color: '#fbd499',
     marginBottom: 10,
   },
 });

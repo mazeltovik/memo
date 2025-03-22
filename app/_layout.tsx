@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StatusBar } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,9 +25,11 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.wrapper}>
+        <StatusBar backgroundColor="#1d2029" />
         <Stack
           screenOptions={{
             headerShown: false,
+            contentStyle: { backgroundColor: '#1d2029' },
           }}
         ></Stack>
       </SafeAreaView>
@@ -38,6 +40,5 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: '#1d2029',
   },
 });

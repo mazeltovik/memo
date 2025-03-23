@@ -1,6 +1,5 @@
 import { File, Directory } from 'expo-file-system/next';
-import {
-  Init,
+import Progress, {
   ChallengeData,
   CountTestData,
   MemoryTestData,
@@ -29,7 +28,6 @@ export function createFile(
   try {
     const file = new File(directory, folder, fileName);
     file.create();
-    console.log(file.uri);
     return true;
   } catch (err) {
     throw new Error(`File creation issue: ${fileName} file`);
@@ -54,7 +52,7 @@ export function saveInit(
   directory: Directory,
   folder: string,
   fileName: string,
-  data: Init
+  data: Progress
 ) {
   try {
     const file = new File(directory, folder, fileName);

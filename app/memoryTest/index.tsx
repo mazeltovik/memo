@@ -9,7 +9,7 @@ import ResView from './resView';
 import MainModal from '../components/modalView';
 import BackHandlerModal from '../components/modals/backHandlerModal';
 import shuffle from '../scripts/shuffle';
-import { localAnimations } from '../index';
+import { localAnimations } from '../_layout';
 import getMemoryWords from '../scripts/getMemoryWords';
 
 export default function MemoryTest() {

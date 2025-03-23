@@ -9,30 +9,12 @@ import isDirExist, {
   createDir,
   createFile,
   getData,
-  deleteFolder,
   saveInit,
 } from './scripts/filesystem/fs';
 import getDiffDate from './scripts/getDiffDate';
 import fsConstants from './scripts/filesystem/constants';
 import getNextDate from './scripts/getNextDate';
-
-export const localAssets = {
-  exercise: require('../assets/images/brain.svg'),
-  training: require('../assets/images/tests.svg'),
-  learning: require('../assets/images/book-open-text.svg'),
-  statistic: require('../assets/images/chart-line.svg'),
-  intro: require('../assets/images/circle-help.svg'),
-  time: require('../assets/images/timer.svg'),
-  memory: require('../assets/images/cpu.svg'),
-};
-
-export const localAnimations = {
-  goldMedal: require('../assets/animations/goldMedal.json'),
-  silverMedal: require('../assets/animations/silverMedal.json'),
-  bronzeMedal: require('../assets/animations/bronzeMedal.json'),
-  chill: require('../assets/animations/chill.json'),
-  waves: require('../assets/animations/waves.json'),
-};
+import { localAssets } from './_layout';
 
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -45,8 +27,6 @@ export default function App() {
         countTestFile,
         memoryTestFile,
       } = fsConstants;
-      // const res = deleteFolder(Paths.document, dirName);
-      // console.log(res);
       const isExist = isDirExist(Paths.document, dirName);
       if (!isExist) {
         const isDirCreated = createDir(Paths.document, dirName);

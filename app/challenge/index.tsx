@@ -31,8 +31,8 @@ import getDiffDate from '../scripts/getDiffDate';
 import fsConstants from '../scripts/filesystem/constants';
 
 enum Evaluation {
-  gold = 120,
-  silver = 180,
+  gold = 180,
+  silver = 210,
   bronze = 240,
 }
 
@@ -102,17 +102,17 @@ export default function MainChallenge() {
   const animated = Animated.parallel([
     Animated.timing(translateY1, {
       toValue: 0,
-      duration: 1000,
+      duration: 500,
       useNativeDriver: true,
     }),
     Animated.timing(translateY2, {
       toValue: 0,
-      duration: 2000,
+      duration: 800,
       useNativeDriver: true,
     }),
     Animated.timing(opacity, {
       toValue: 1,
-      duration: 2000,
+      duration: 1000,
       useNativeDriver: true,
     }),
   ]);

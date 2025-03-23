@@ -11,7 +11,7 @@ import {
 import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import ButtonWrapper, { ButtonContainer } from '../components/buttonWrapper';
-import { localAnimations } from '../index';
+import { localAnimations } from '../_layout';
 
 type Result = {
   operand1: number;
@@ -306,8 +306,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   lottieContainer: {
-    width: 180,
-    height: 180,
+    width: 150,
+    height: 150,
     alignSelf: 'center',
   },
   evaluationText: {

@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import MenuItem from '../components/menuItem';
-import { localAssets } from '../index';
+import { localAssets } from '../_layout';
 
 export default function Testing() {
   return (

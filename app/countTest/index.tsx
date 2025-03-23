@@ -21,7 +21,7 @@ import ButtonWrapper, {
 import formatDuration from '../scripts/formatDuration';
 import { getData, saveCountTestRes } from '../scripts/filesystem/fs';
 import Progress from '../scripts/filesystem/types';
-import { localAnimations } from '../index';
+import { localAnimations } from '../_layout';
 import fsConstants from '../scripts/filesystem/constants';
 
 enum Evaluation {

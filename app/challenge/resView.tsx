@@ -306,9 +306,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   lottieContainer: {
-    width: 150,
-    height: 150,
+    width: 120,
+    height: 120,
     alignSelf: 'center',
+    transform: [{ scale: 1.5 }],
   },
   evaluationText: {
     color: '#fbd499',

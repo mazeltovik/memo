@@ -23,8 +23,10 @@ const TabMenu = ({ tabs, translateX, onPressItem }: Props) => {
     Animated.timing(translateX, {
       toValue: index,
       duration: 300,
-      useNativeDriver: false,
-    }).start();
+      useNativeDriver: true,
+    }).start(() => {
+      translateX.setValue(index);
+    });
   };
 
   const handleTabPress = (index: number) => {

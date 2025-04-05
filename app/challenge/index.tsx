@@ -8,6 +8,7 @@ import {
   Animated,
   BackHandler,
 } from 'react-native';
+import * as SystemUI from 'expo-system-ui';
 import { Paths } from 'expo-file-system/next';
 import LottieView from 'lottie-react-native';
 import ButtonWrapper, {
@@ -130,6 +131,9 @@ export default function MainChallenge() {
     return () => backHandler.remove();
   }, []);
   useEffect(() => {
+    //Set UI Color
+    SystemUI.setBackgroundColorAsync('#1d2029');
+    // Set Time
     settings.startTime = Math.floor(Date.now() / 1000);
   }, []);
   useEffect(() => {

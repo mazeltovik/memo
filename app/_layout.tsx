@@ -69,5 +69,6 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+    backgroundColor: '#1d2029',
   },
 });

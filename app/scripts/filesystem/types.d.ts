@@ -33,5 +33,12 @@ export type MemoryTestData = {
     percentage: number;
 }
 
+export type ModalsData = {
+    isChallengeShow:boolean,
+    isCountTestShow:boolean,
+    isMemoryTestShow:boolean,
+    isProgressShow:boolean,
+}
+
 
 

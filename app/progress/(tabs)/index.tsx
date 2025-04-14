@@ -10,24 +10,35 @@ import LottieView from 'lottie-react-native';
 import { Paths } from 'expo-file-system/next';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MainModal from '@/app/components/modalView';
+import ProgressLearningModal from '@/app/components/modals/progressLearningModal';
 import DeleteHistoryModal from '@/app/components/modals/deleteHistoryModal';
 import { getData } from '@/app/scripts/filesystem/fs';
 import getDate from '@/app/scripts/getDate';
 import fsConstants from '@/app/scripts/filesystem/constants';
-import Progress from '@/app/scripts/filesystem/types';
+import Progress, { ModalsData } from '@/app/scripts/filesystem/types';
 
 export default function CalendarView() {
   const [data, setData] = useState<Progress | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [learningModalVisible, setLearningModalVisible] = useState(false);
   const onPress = () => {
     setModalVisible(true);
   };
   useEffect(() => {
     const gettingData = () => {
-      const { dirName, initFile } = fsConstants;
+      const { dirName, initFile, modalsFile } = fsConstants;
       const data = getData<Progress>(Paths.document, dirName, initFile);
       if (data) {
         setData(data);
+      }
+      const modalsData = getData<ModalsData>(
+        Paths.document,
+        dirName,
+        modalsFile
+      );
+      if (modalsData) {
+        const { isProgressShow } = modalsData;
+        if (!isProgressShow) setLearningModalVisible(true);
       }
     };
     try {
@@ -49,6 +60,17 @@ export default function CalendarView() {
             setModalVisible={setModalVisible}
           />
         </MainModal>
+        {learningModalVisible && (
+          <MainModal
+            modalVisible={learningModalVisible}
+            setModalVisible={setLearningModalVisible}
+          >
+            <ProgressLearningModal
+              modalVisible={learningModalVisible}
+              setModalVisible={setLearningModalVisible}
+            />
+          </MainModal>
+        )}
         {data && (
           <View style={styles.deleteContainer}>
             <TouchableOpacity onPress={onPress}>
@@ -59,13 +81,13 @@ export default function CalendarView() {
         {data && (
           <ScrollView style={styles.content}>
             <View style={styles.section}>
-              <Text style={[styles.info, { flex: 2 }]}>Начало тренировки:</Text>
+              <Text style={[styles.info, { flex: 1 }]}>Начало тренировки:</Text>
               <Text style={[styles.info, { flex: 1, textAlign: 'right' }]}>
                 {getDate(data.start)}
               </Text>
             </View>
             <View style={styles.section}>
-              <Text style={[styles.info, { flex: 2 }]}>
+              <Text style={[styles.info, { flex: 1 }]}>
                 Текущий день тренировки:
               </Text>
               <Text style={[styles.info, { flex: 1, textAlign: 'right' }]}>
@@ -73,13 +95,13 @@ export default function CalendarView() {
               </Text>
             </View>
             <View style={styles.section}>
-              <Text style={[styles.info, { flex: 2 }]}>Конец тренировки:</Text>
+              <Text style={[styles.info, { flex: 1 }]}>Конец тренировки:</Text>
               <Text style={[styles.info, { flex: 1, textAlign: 'right' }]}>
                 {getDate(data.finish)}
               </Text>
             </View>
             <View style={styles.section}>
-              <Text style={[styles.info, { flex: 2 }]}>
+              <Text style={[styles.info, { flex: 1 }]}>
                 Оценка работы префронтальной коры головного мозга:
               </Text>
               <Text style={[styles.info, { flex: 1, textAlign: 'right' }]}>
@@ -126,7 +148,6 @@ const styles = StyleSheet.create({
   section: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 28,
   },

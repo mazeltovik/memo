@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     marginTop: 140,
     height: '70%',
+    zIndex: 1000,
   },
 });
 

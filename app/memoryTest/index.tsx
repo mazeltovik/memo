@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { StyleSheet, View, BackHandler } from 'react-native';
+import { Paths } from 'expo-file-system/next';
 import { useWindowDimensions } from 'react-native';
 import Countdown from '../components/countDown';
 import MemoryList from './memoryList';
@@ -7,10 +8,14 @@ import SwipeView from './swipeView';
 import ButtonWrapper, { StartBtn } from '../components/buttonWrapper';
 import ResView from './resView';
 import MainModal from '../components/modalView';
+import MemoryLearningModal from '../components/modals/memoryTestLearningModal';
 import BackHandlerModal from '../components/modals/backHandlerModal';
 import shuffle from '../scripts/shuffle';
 import { localAnimations } from '../_layout';
 import getMemoryWords from '../scripts/getMemoryWords';
+import { getData } from '../scripts/filesystem/fs';
+import fsConstants from '../scripts/filesystem/constants';
+import { ModalsData } from '../scripts/filesystem/types';
 
 export default function MemoryTest() {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
@@ -25,6 +30,7 @@ export default function MemoryTest() {
   const [approvedWords, setApprovedWords] = useState<string[]>([]);
   const [score, setScore] = useState({ correct: 0, percentage: 0 });
   const [modalVisible, setModalVisible] = useState(false);
+  const [learningModalVisible, setLearningModalVisible] = useState(false);
   const { initialWords, shuffleInitialWords, shuffleWrongWords } =
     useMemo(() => {
       const [initialWords, wrongWords] = getMemoryWords();
@@ -47,6 +53,18 @@ export default function MemoryTest() {
 
     return () => backHandler.remove();
   }, []);
+  useEffect(() => {
+    try {
+      const { dirName, modalsFile } = fsConstants;
+      const data = getData<ModalsData>(Paths.document, dirName, modalsFile);
+      if (data) {
+        const { isMemoryTestShow } = data;
+        if (!isMemoryTestShow) setLearningModalVisible(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
   const onStart = () => {
     setShowIntro(!showIntro);
     setShowWordList(!showWordList);
@@ -59,6 +77,17 @@ export default function MemoryTest() {
           setModalVisible={setModalVisible}
         />
       </MainModal>
+      {learningModalVisible && (
+        <MainModal
+          modalVisible={learningModalVisible}
+          setModalVisible={setLearningModalVisible}
+        >
+          <MemoryLearningModal
+            modalVisible={learningModalVisible}
+            setModalVisible={setLearningModalVisible}
+          />
+        </MainModal>
+      )}
       <View style={styles.container}>
         {showIntro && (
           <View style={styles.btnContainer}>

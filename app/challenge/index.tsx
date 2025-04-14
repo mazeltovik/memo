@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,7 +8,6 @@ import {
   Animated,
   BackHandler,
 } from 'react-native';
-import * as SystemUI from 'expo-system-ui';
 import { Paths } from 'expo-file-system/next';
 import LottieView from 'lottie-react-native';
 import ButtonWrapper, {
@@ -19,22 +18,24 @@ import ProgressBar from '../components/progressBar';
 import ResView from './resView';
 import MainModal from '../components/modalView';
 import BackHandlerModal from '../components/modals/backHandlerModal';
-import getRandomInt, { getRandomEvenInt } from '../scripts/getRandomInt';
+import ChallengeLearningModal from '../components/modals/challengeLearningModal';
+import createTasks from '../scripts/createTasks';
 import formatDuration from '../scripts/formatDuration';
 import Progress from '../scripts/filesystem/types';
 import {
   getData,
   saveMainChallengeRes,
-  saveInit,
+  saveSimpleData,
 } from '../scripts/filesystem/fs';
 import getNextDate from '../scripts/getNextDate';
 import getDiffDate from '../scripts/getDiffDate';
 import fsConstants from '../scripts/filesystem/constants';
+import { ModalsData } from '../scripts/filesystem/types';
 
 enum Evaluation {
-  gold = 180,
-  silver = 210,
-  bronze = 240,
+  gold = 182,
+  silver = 212,
+  bronze = 242,
 }
 
 enum ChallengeSettings {
@@ -48,11 +49,10 @@ enum ChallengeSettings {
   bronzeMedal = 30,
 }
 
-type Operations = '_' | '+' | '-' | '*' | '/';
-
-type Challenge = {
-  operation: Operations;
-  amount: number;
+type Operation = {
+  operand1: number;
+  operand2: number;
+  operation: string;
 };
 
 type Result = {
@@ -70,6 +70,7 @@ export default function MainChallenge() {
 
   /state/;
   const [modalVisible, setModalVisible] = useState(false);
+  const [learningModalVisible, setLearningModalVisible] = useState(false);
   const [start, setStart] = useState(false);
   const [step, setStep] = useState(0);
   const [totalChallenge, setTotalChallenge] = useState(
@@ -85,13 +86,13 @@ export default function MainChallenge() {
 
   /refs/;
   const results = useRef<Result[]>([]);
-  const challenges = useRef<Challenge[]>([
-    { operation: '_', amount: 0 },
-    { operation: '+', amount: ChallengeSettings.plusChallenge },
-    { operation: '-', amount: ChallengeSettings.minusChallenge },
-    { operation: '*', amount: ChallengeSettings.multiplyChallenge },
-    { operation: '/', amount: ChallengeSettings.divideChallenge },
-  ]);
+  const challenges = useRef<Operation[]>([]);
+  useMemo(() => {
+    const tasksPartOne = createTasks();
+    const tasksPartTwo = createTasks();
+    challenges.current = [...tasksPartOne, ...tasksPartTwo];
+  }, []);
+
   const settings = useRef({
     startTime: 0,
     finishTime: 0,
@@ -100,23 +101,6 @@ export default function MainChallenge() {
     fine: 0,
     evaluation: '',
   }).current;
-  const animated = Animated.parallel([
-    Animated.timing(translateY1, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
-    }),
-    Animated.timing(translateY2, {
-      toValue: 0,
-      duration: 800,
-      useNativeDriver: true,
-    }),
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-  ]);
   useEffect(() => {
     const backAction = () => {
       setModalVisible(true);
@@ -131,46 +115,40 @@ export default function MainChallenge() {
     return () => backHandler.remove();
   }, []);
   useEffect(() => {
-    //Set UI Color
-    SystemUI.setBackgroundColorAsync('#1d2029');
-    // Set Time
-    settings.startTime = Math.floor(Date.now() / 1000);
+    try {
+      const { dirName, modalsFile } = fsConstants;
+      const data = getData<ModalsData>(Paths.document, dirName, modalsFile);
+      if (data) {
+        const { isChallengeShow } = data;
+        if (!isChallengeShow) setLearningModalVisible(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
   useEffect(() => {
+    const animated = Animated.parallel([
+      Animated.timing(translateY1, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY2, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+    ]);
     if (totalChallenge > 0) {
-      const availableChallenge = challenges.current
-        .map((сhallenge, index) => {
-          if (сhallenge.amount > 0) return index;
-        })
-        .filter((availableIndex) => availableIndex != undefined);
-      const [min, max] =
-        availableChallenge.length > 0
-          ? [availableChallenge[0], availableChallenge.at(-1)]
-          : [null, null];
-      if (min && max) {
-        const operationIndex = getRandomInt(min, max);
-        const { operation } = challenges.current[operationIndex];
-        if (operation == '+') {
-          const operand1 = getRandomInt(2, 9);
-          const operand2 = getRandomInt(4, 9);
-          setChallenge({ operand1, operand2, operation });
-          animated.start();
-        } else if (operation == '-') {
-          const operand1 = getRandomInt(9, 18);
-          const operand2 = getRandomInt(8, 2);
-          setChallenge({ operand1, operand2, operation });
-          animated.start();
-        } else if (operation == '*') {
-          const operand1 = getRandomInt(2, 9);
-          const operand2 = getRandomInt(4, 9);
-          setChallenge({ operand1, operand2, operation });
-          animated.start();
-        } else {
-          const [operand1, operand2] = getRandomEvenInt(10);
-          setChallenge({ operand1, operand2, operation });
-          animated.start();
-        }
-      }
+      const { operand1, operand2, operation } =
+        challenges.current.shift() as Operation;
+      setChallenge({ operand1, operand2, operation });
+      animated.start();
     } else {
       settings.finishTime = Math.floor(Date.now() / 1000);
       settings.formatedTime = formatDuration(
@@ -204,7 +182,7 @@ export default function MainChallenge() {
           const finish = getNextDate(start, 60);
           const checkDay = getNextDate(start, 5);
           const currentDay = 1;
-          saveInit(Paths.document, dirName, initFile, {
+          saveSimpleData(Paths.document, dirName, initFile, {
             start,
             finish,
             checkDay,
@@ -229,7 +207,7 @@ export default function MainChallenge() {
             const newCurrentDay = currentDay + diffDays;
             const newCheckDay =
               newCurrentDay % 5 == 0 ? getNextDate(checkDay, 5) : checkDay;
-            saveInit(Paths.document, dirName, initFile, {
+            saveSimpleData(Paths.document, dirName, initFile, {
               start,
               finish,
               currentDay: newCurrentDay,
@@ -251,6 +229,9 @@ export default function MainChallenge() {
         console.error(err);
       }
     }
+    return () => {
+      animated.reset();
+    };
   }, [translateY1, translateY2, opacity, totalChallenge]);
   const onClick = () => {
     if (input) {
@@ -272,20 +253,14 @@ export default function MainChallenge() {
           settings.correct += calcRes == resInput ? 1 : 0;
         }
         results.current.push({ operand1, operand2, operation, res: input });
-        const currentChallenge = challenges.current.find(
-          (challenge) => challenge.operation == operation
-        );
-        if (currentChallenge) {
-          currentChallenge.amount -= 1;
-          onChangeInput('');
-          setStep(step + 1);
-          setTotalChallenge(totalChallenge - 1);
-          animated.reset();
-        }
+        onChangeInput('');
+        setStep(step + 1);
+        setTotalChallenge(totalChallenge - 1);
       }
     }
   };
   const onStart = () => {
+    settings.startTime = Math.floor(Date.now() / 1000);
     setStart(true);
   };
   const showRes = () => {
@@ -297,6 +272,15 @@ export default function MainChallenge() {
         <BackHandlerModal
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
+        />
+      </MainModal>
+      <MainModal
+        modalVisible={learningModalVisible}
+        setModalVisible={setLearningModalVisible}
+      >
+        <ChallengeLearningModal
+          modalVisible={learningModalVisible}
+          setModalVisible={setLearningModalVisible}
         />
       </MainModal>
       {!start && (

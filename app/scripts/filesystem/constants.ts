@@ -4,6 +4,7 @@ const fsConstants = {
   challengeFile: 'challenge.json',
   countTestFile: 'countTest.json',
   memoryTestFile: 'memoryTest.json',
+  modalsFile:'modals.json'
 };
 
 export default fsConstants;

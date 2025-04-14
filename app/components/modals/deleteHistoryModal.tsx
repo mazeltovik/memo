@@ -61,6 +61,7 @@ export default function DeleteHistoryModal({
               text={'нет'}
               onClick={disapprovedPress}
               backgroundColor="#879c7d"
+              color="white"
             />
           </ButtonWrapper>
         </View>

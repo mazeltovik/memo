@@ -48,11 +48,11 @@ export function getData<T>(
   }
 }
 
-export function saveInit(
+export function saveSimpleData<T>(
   directory: Directory,
   folder: string,
   fileName: string,
-  data: Progress
+  data: T
 ) {
   try {
     const file = new File(directory, folder, fileName);

@@ -1,4 +1,5 @@
 import 'expo-dev-client';
+import * as SystemUI from 'expo-system-ui';
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -41,6 +42,10 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
+
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync('#1d2029');
+  }, []);
 
   const onLayoutRootView = useCallback(() => {
     if (loaded) {

@@ -9,7 +9,7 @@ import isDirExist, {
   createDir,
   createFile,
   getData,
-  saveInit,
+  saveSimpleData,
 } from './scripts/filesystem/fs';
 import getDiffDate from './scripts/getDiffDate';
 import fsConstants from './scripts/filesystem/constants';
@@ -26,6 +26,7 @@ export default function App() {
         challengeFile,
         countTestFile,
         memoryTestFile,
+        modalsFile,
       } = fsConstants;
       const isExist = isDirExist(Paths.document, dirName);
       if (!isExist) {
@@ -35,6 +36,13 @@ export default function App() {
           createFile(Paths.document, dirName, challengeFile);
           createFile(Paths.document, dirName, countTestFile);
           createFile(Paths.document, dirName, memoryTestFile);
+          createFile(Paths.document, dirName, modalsFile);
+          saveSimpleData(Paths.document, dirName, modalsFile, {
+            isChallengeShow: false,
+            isCountTestShow: false,
+            isMemoryTestShow: false,
+            isProgressShow: false,
+          });
         }
         setModalVisible(true);
       } else {
@@ -47,7 +55,7 @@ export default function App() {
             const newCurrentDay = currentDay + diffDays;
             const newCheckDay =
               newCurrentDay % 5 == 0 ? getNextDate(checkDay, 5) : checkDay;
-            saveInit(Paths.document, dirName, initFile, {
+            saveSimpleData(Paths.document, dirName, initFile, {
               start,
               finish,
               currentDay: newCurrentDay,

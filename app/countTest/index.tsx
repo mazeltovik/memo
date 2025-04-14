@@ -12,6 +12,7 @@ import LottieView from 'lottie-react-native';
 import { useRouter } from 'expo-router';
 import { Paths } from 'expo-file-system/next';
 import MainModal from '../components/modalView';
+import CountTestLearningModal from '../components/modals/countTestLearningModal';
 import BackHandlerModal from '../components/modals/backHandlerModal';
 import Clock from '../components/clock';
 import ButtonWrapper, {
@@ -20,7 +21,7 @@ import ButtonWrapper, {
 } from '../components/buttonWrapper';
 import formatDuration from '../scripts/formatDuration';
 import { getData, saveCountTestRes } from '../scripts/filesystem/fs';
-import Progress from '../scripts/filesystem/types';
+import Progress, { ModalsData } from '../scripts/filesystem/types';
 import { localAnimations } from '../_layout';
 import fsConstants from '../scripts/filesystem/constants';
 
@@ -38,6 +39,7 @@ export default function CountTest() {
   const [stop, setStop] = useState(false);
   const [time, setTime] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [learningModalVisible, setLearningModalVisible] = useState(false);
   const [showMedal, setShowMedal] = useState(false);
   const [score, setScore] = useState({
     formatedTime: '',
@@ -82,6 +84,18 @@ export default function CountTest() {
     router.dismissAll();
   };
   useEffect(() => {
+    try {
+      const { dirName, modalsFile } = fsConstants;
+      const data = getData<ModalsData>(Paths.document, dirName, modalsFile);
+      if (data) {
+        const { isCountTestShow } = data;
+        if (!isCountTestShow) setLearningModalVisible(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+  useEffect(() => {
     const backAction = () => {
       setModalVisible(true);
       return true;
@@ -123,6 +137,17 @@ export default function CountTest() {
           setModalVisible={setModalVisible}
         />
       </MainModal>
+      {learningModalVisible && (
+        <MainModal
+          modalVisible={learningModalVisible}
+          setModalVisible={setLearningModalVisible}
+        >
+          <CountTestLearningModal
+            modalVisible={learningModalVisible}
+            setModalVisible={setLearningModalVisible}
+          />
+        </MainModal>
+      )}
       {!start && (
         <View style={styles.startContainer}>
           <ButtonWrapper>

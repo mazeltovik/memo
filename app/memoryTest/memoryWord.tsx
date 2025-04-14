@@ -15,13 +15,16 @@ export default function MemoryWord({
 }: wordTileTypes) {
   const backgroundColor = getHex();
   const basicDuration = 1000;
-  const translateX = useAnimatedValue(-windowWidth);
+  const translateX = useAnimatedValue(duration <= 10 ? -windowWidth : 0);
   useEffect(() => {
-    Animated.timing(translateX, {
+    const animated = Animated.timing(translateX, {
       toValue: 0,
       duration: (basicDuration * duration) / 4,
       useNativeDriver: true,
-    }).start();
+    });
+    if (duration <= 10) {
+      animated.start();
+    }
   }, [translateX]);
   return (
     <Animated.View
@@ -51,7 +54,7 @@ export default function MemoryWord({
 
 const wordTileStyles = StyleSheet.create({
   container: {
-    marginBottom: 35,
+    marginBottom: 25,
     backgroundColor: '#252b43',
     height: 50,
     borderBottomLeftRadius: 10,

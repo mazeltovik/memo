@@ -34,6 +34,7 @@ export default function BackHandlerModal({
           <ButtonWrapper>
             <ButtonContainer
               text={'продолжить'}
+              color="white"
               onClick={disapprovedPress}
               backgroundColor="#879c7d"
             />

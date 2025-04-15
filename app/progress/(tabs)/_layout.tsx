@@ -19,6 +19,7 @@ export default function TabLayout() {
           fontFamily: 'Poiret-One',
           fontWeight: 'regular',
           color: '#daa543',
+          fontSize: 16,
         },
         tabBarStyle: {
           backgroundColor: '#1d2029',

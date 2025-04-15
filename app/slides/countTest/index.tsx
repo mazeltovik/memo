@@ -1,8 +1,11 @@
 import { Stack } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Carousel from '@/app/components/carousel';
 import countTestSlides from './countTestSlides';
+import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 export default function CountTest() {
+  const router = useRouter();
   return (
     <View style={styles.wrapper}>
       <Stack.Screen
@@ -16,6 +19,23 @@ export default function CountTest() {
             fontFamily: 'Poiret-One',
             fontWeight: 'regular',
             color: '#daa543',
+            fontSize: 16,
+          },
+          headerLeft: () => {
+            return (
+              <Pressable
+                onPress={() => router.back()}
+                style={{
+                  paddingHorizontal: 8,
+                }}
+              >
+                <Ionicons
+                  name="arrow-back-circle-sharp"
+                  size={40}
+                  color="#daa543"
+                />
+              </Pressable>
+            );
           },
         }}
       />
